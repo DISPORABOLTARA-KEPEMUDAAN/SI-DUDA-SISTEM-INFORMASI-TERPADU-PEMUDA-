@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SI-DUDA - Sistem Informasi Terpadu Pemuda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg top-navbar px-3 fixed-top">
+        <div class="container-fluid">
+            <span class="navbar-brand fw-bold text-white d-flex align-items-center">
+                <img src="LOGO APLIKASI.png" alt="Logo" class="brand-logo me-2" id="logoToggleBtn" onclick="toggleSidebar()" style="cursor:pointer;" onerror="this.src='https://placehold.co/40x40/06b6d4/ffffff?text=SD'"> 
+                <span onclick="showSection('home')" style="cursor:pointer;">SI-DUDA (SISTEM INFORMASI TERPADU PEMUDA)</span>
+            </span>
+            <div class="ms-auto">
+                <span class="text-white-50 small d-none d-md-inline fw-semibold">
+                    <i class="bi bi-building me-1 text-cyan"></i>DISPORA BOLAANG MONGONDOW UTARA
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar active" id="sidebarMenu">
+        <div class="sidebar-header p-3 border-bottom border-secondary text-center">
+            <h6 class="text-cyan fw-bold mb-0">MENU UTAMA SYSTEM</h6>
+        </div>
+        <ul class="nav flex-column p-2">
+            <li class="nav-item mb-1">
+                <a class="nav-link text-white active" id="nav-home" href="#" onclick="showSection('home')">
+                    <i class="bi bi-house-door-fill text-primary me-2"></i> HOME
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-white" id="nav-okp" href="#" onclick="showSection('okp')">
+                    <i class="bi bi-shield-shaded text-warning me-2"></i> DATA OKP
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-white" id="nav-pemuda" href="#" onclick="showSection('pemuda')">
+                    <i class="bi bi-people-fill text-info me-2"></i> DATA PEMUDA
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-white" id="nav-kegiatan" href="#" onclick="showSection('kegiatan')">
+                    <i class="bi bi-calendar-event-fill text-danger me-2"></i> INFORMASI KEGIATAN
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-white" id="nav-panduan" href="#" onclick="showSection('panduan')">
+                    <i class="bi bi-file-earmark-arrow-down-fill text-success me-2"></i> PANDUAN & JUKNIS
+                </a>
+            </li>
+            <li class="nav-item mb-1">
+                <a class="nav-link text-white" id="nav-survei" href="#" onclick="showSection('survei')">
+                    <i class="bi bi-clipboard-check-fill text-purple me-2"></i> SURVEI KEPUASAN
+                </a>
+            </li>
+            <li class="nav-item mb-1 border-top border-secondary mt-2 pt-2">
+                <a class="nav-link text-white" id="nav-login" href="#" onclick="showSection('login')">
+                    <i class="bi bi-lock-fill text-pink me-2"></i> LOGIN SYSTEM
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content" id="mainContentBody">
+        <div class="container-fluid p-4">
+
+            <div id="section-home" class="content-section">
+                <div class="p-4 rounded shadow mb-4 text-center bg-dark-sec">
+                    <h2 class="fw-bold text-cyan">SELAMAT DATANG DI SI-DUDA</h2>
+                    <p class="text-white-50 mb-0">SISTEM INFORMASI TERPADU PEMUDA KABUPATEN BOLAANG MONGONDOW UTARA</p>
+                </div>
+                
+                <h4 class="fw-bold text-white mb-3"><i class="bi bi-info-circle-fill me-2 text-cyan"></i>Kegunaan Website & Tupoksi Kerja</h4>
+                <div class="row g-3 mb-5">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="home-card p-3 h-100 rounded text-white grad-red shadow">
+                            <i class="bi bi-globe fs-2 mb-2 d-block text-white"></i>
+                            <h5 class="fw-bold">Pelayanan Satu Pintu</h5>
+                            <p class="small mb-0 opacity-90">Menyediakan pusat pelayanan kepemudaan terpadu dari Bidang Kepemudaan DISPORA untuk menjamin keadilan informasi bagi seluruh pemuda pelosok daerah.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="home-card p-3 h-100 rounded text-white grad-blue shadow">
+                            <i class="bi bi-diagram-3-fill fs-2 mb-2 d-block text-white"></i>
+                            <h5 class="fw-bold">Pemberdayaan Organisasi</h5>
+                            <p class="small mb-0 opacity-90">Melakukan pembinaan, pendataan, dan pemantauan legalitas serta keaktifan Organisasi Kepemudaan (OKP) di tingkat Kabupaten secara berkala.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="home-card p-3 h-100 rounded text-white grad-yellow shadow">
+                            <i class="bi bi-graph-up-arrow fs-2 mb-2 d-block text-white"></i>
+                            <h5 class="fw-bold">Sinkronisasi Data Profil</h5>
+                            <p class="small mb-0 opacity-90">Mengelola data demografi pemuda secara riil dari tingkat desa dan kecamatan guna percepatan pencapaian target Indeks Pembangunan Pemuda (IPP).</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="home-card p-3 h-100 rounded text-white grad-green shadow">
+                            <i class="bi bi-award-fill fs-2 mb-2 d-block text-white"></i>
+                            <h5 class="fw-bold">Fasilitasi Kompetensi</h5>
+                            <p class="small mb-0 opacity-90">Menyelenggarakan program strategis tahunan seperti Kreativesia, Wirausaha Muda, Kepramukaan, dan Jambore Pemuda secara transparan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold text-white mb-3"><i class="bi bi-bar-chart-line-fill me-2 text-cyan"></i>Rangkuman Statistik Data Utama</h4>
+                <div class="row g-4 mb-5">
+                    <div class="col-12">
+                        <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
+                            <h6 class="fw-bold text-warning mb-3"><i class="bi bi-shield-shaded me-1"></i>Analisis Kelayakan Status Organisasi Pemuda (OKP) Daerah</h6>
+                            <div class="chart-container-canvas">
+                                <canvas id="chartHomeOKP"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
+                            <h6 class="fw-bold text-info mb-3"><i class="bi bi-people-fill me-1"></i>Agregat Distribusi Populasi Pemuda Berbasis Wilayah Kecamatan</h6>
+                            <div class="chart-container-canvas">
+                                <canvas id="chartHomePemuda"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
+                            <h6 class="fw-bold text-purple mb-3"><i class="bi bi-emoji-smile-fill me-1"></i>Metrik Indeks Kepuasan Layanan Sistem Terpadu SI-DUDA</h6>
+                            <div class="chart-container-canvas">
+                                <canvas id="chartHomeSurvei"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold text-white mb-3"><i class="bi bi-grid-fill me-2 text-cyan"></i>Fungsi Ruang Informasi Terpadu</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4" onclick="showSection('kegiatan')" style="cursor: pointer;">
+                        <div class="info-card grad-red p-3 rounded text-white shadow h-100">
+                            <i class="bi bi-calendar-event-fill fs-3 mb-2 d-block"></i>
+                            <h5 class="fw-bold">INFORMASI KEGIATAN</h5>
+                            <p class="small text-white-90 mb-0">Menyediakan akses digital pendaftaran kompetensi dan rekrutmen program kepemudaan daerah seperti rumpun Kreativesia dan Wirausaha secara real-time.</p>
+                            <span id="summary-home-kegiatan" class="badge bg-dark mt-3 p-2 small border border-secondary text-cyan d-block">Memuat Ringkasan Kegiatan...</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4" onclick="showSection('panduan')" style="cursor: pointer;">
+                        <div class="info-card grad-blue p-3 rounded text-white shadow h-100">
+                            <i class="bi bi-file-earmark-arrow-down-fill fs-3 mb-2 d-block"></i>
+                            <h5 class="fw-bold">PANDUAN & JUKNIS</h5>
+                            <p class="small text-white-90 mb-0">Pusat berkas digital kedinasan untuk mengunduh dokumen standarisasi kelembagaan OKP dan Petunjuk Teknis perlombaan daerah.</p>
+                            <span id="summary-home-panduan" class="badge bg-dark mt-3 p-2 small border border-secondary text-info d-block">Memuat Data Berkas...</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4" onclick="showSection('survei')" style="cursor: pointer;">
+                        <div class="info-card grad-yellow p-3 rounded text-white shadow h-100">
+                            <i class="bi bi-clipboard-check-fill fs-3 mb-2 d-block"></i>
+                            <h5 class="fw-bold">SURVEI KEPUASAN</h5>
+                            <p class="small text-white-90 mb-0">Instrumen kuesioner otomatis penampung kritik, saran, serta metrik evaluasi kepuasan pengguna terhadap efisiensi website.</p>
+                            <span id="summary-home-survei" class="badge bg-dark mt-3 p-2 small border border-secondary text-warning d-block">Memuat Statistik Nilai...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-secondary mt-5">
+                <footer class="mt-4 p-4 rounded bg-dark-sec border border-secondary text-white">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-cyan mb-2">SI-DUDA BOLTARA</h5>
+                            <p class="small text-white-50 mb-3">Sistem Informasi Terpadu Pemuda Kabupaten Bolaang Mongondow Utara.</p>
+                            <p class="small mb-0 fw-bold text-light"><i class="bi bi-c-circle me-1"></i> Hak Cipta 2026 - BIDANG KEPEMUDAAN DISPORA BOLTARA</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="fw-bold text-cyan mb-2">Info Kontak</h6>
+                            <ul class="list-unstyled small text-white-50 mb-0">
+                                <li class="mb-2"><i class="bi bi-geo-alt-fill me-2 text-danger"></i>Kantor DISPORA Kab. Bolaang Mongondow Utara</li>
+                                <li class="mb-2"><i class="bi bi-envelope-fill me-2 text-warning"></i>dispora@bolmutkab.go.id</li>
+                                <li><i class="bi bi-telephone-fill me-2 text-success"></i>+62 812-3456-7890</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="fw-bold text-cyan mb-2">Sosial Media Resmi</h6>
+                            <div class="d-flex gap-3 fs-5 mt-2">
+                                <a href="#" class="text-white-50 socmed-icon"><i class="bi bi-facebook text-primary"></i></a>
+                                <a href="#" class="text-white-50 socmed-icon"><i class="bi bi-instagram text-pink"></i></a>
+                                <a href="#" class="text-white-50 socmed-icon"><i class="bi bi-youtube text-danger"></i></a>
+                                <a href="#" class="text-white-50 socmed-icon"><i class="bi bi-twitter-x text-light"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+
+            <div id="section-okp" class="content-section d-none">
+                <h4 class="fw-bold text-white mb-3"><i class="bi bi-shield-shaded me-2 text-warning"></i>DATA ORGANISASI KEPEMUDAAN (OKP) BOLTARA</h4>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <div class="info-card grad-red p-3 rounded text-white text-center shadow">
+                            <i class="bi bi-collection-fill fs-3 mb-1 d-block text-white"></i>
+                            <h6>Jumlah OKP Terdaftar</h6>
+                            <h3 class="fw-bold mb-0" id="card-okp-total">0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card grad-blue p-3 rounded text-white text-center shadow">
+                            <i class="bi bi-file-earmark-check-fill fs-3 mb-1 d-block text-white"></i>
+                            <h6>Jumlah OKP Aktif</h6>
+                            <h3 class="fw-bold mb-0" id="card-okp-aktif">0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card grad-yellow p-3 rounded text-white text-center shadow">
+                            <i class="bi bi-exclamation-triangle-fill fs-3 mb-1 d-block text-white"></i>
+                            <h6>Jumlah OKP Validasi / Tidak Aktif</h6>
+                            <h3 class="fw-bold mb-0" id="card-okp-validasi">0</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark-sec border-secondary text-white"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchOKP" class="form-control bg-dark text-white border-secondary" placeholder="Cari Nama Organisasi, Ketua, atau Wilayah Basis secara Akurat...">
+                    </div>
+                </div>
+
+                <div class="bg-dark-sec p-3 rounded shadow">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped table-hover mb-0 align-middle text-center" id="tableOKP">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>Nama Organisasi</th>
+                                    <th>Tingkatan Kepengurusan</th>
+                                    <th>Nama Ketua</th>
+                                    <th>Wilayah Basis (Kecamatan)</th>
+                                    <th>Status Organisasi</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-pemuda" class="content-section d-none">
+                <h4 class="fw-bold text-white mb-3"><i class="bi bi-people-fill me-2 text-info"></i>DATA PEMUDA BOLTARA</h4>
+                
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="info-card grad-red p-3 rounded text-white text-center shadow">
+                            <i class="bi bi-person-lines-fill fs-3 mb-1 d-block text-white"></i>
+                            <p class="small mb-1 fw-bold">Jumlah Keseluruhan Pemuda</p>
+                            <h3 class="fw-bold mb-0" id="card-pemuda-total">0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card grad-blue p-3 rounded text-white text-center shadow">
+                            <i class="bi bi-gender-male fs-3 mb-1 d-block text-white"></i>
+                            <p class="small mb-1 fw-bold">Jumlah Pemuda Laki-laki</p>
+                            <h3 class="fw-bold mb-0" id="card-pemuda-l">0</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card grad-yellow p-3 rounded text-white text-center shadow">
+                            <i class="bi bi-gender-female fs-3 mb-1 d-block text-white"></i>
+                            <p class="small mb-1 fw-bold">Jumlah Pemuda Perempuan</p>
+                            <h3 class="fw-bold mb-0" id="card-pemuda-p">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-sec p-4 rounded shadow mb-4 border border-secondary">
+                    <h5 class="fw-bold text-cyan mb-3"><i class="bi bi-bar-chart-line-fill me-2"></i>Jumlah Pemuda Pada Setiap Kecamatan</h5>
+                    <div style="position: relative; height:320px; width:100%;">
+                        <canvas id="chartKecamatanBody"></canvas>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark-sec border-secondary text-white"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchPemuda" class="form-control bg-dark text-white border-secondary" placeholder="Cari Berdasarkan Kecamatan atau Wilayah Desa/Kelurahan...">
+                    </div>
+                </div>
+
+                <div class="bg-dark-sec p-3 rounded shadow">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0 align-middle text-center" id="tablePemuda">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kecamatan</th>
+                                    <th>Desa/Kelurahan</th>
+                                    <th>Jumlah Pemuda Laki-laki</th>
+                                    <th>Jumlah Pemuda Perempuan</th>
+                                    <th>Total Pemuda di Desa</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-kegiatan" class="content-section d-none">
+                <h4 class="fw-bold text-white mb-3"><i class="bi bi-calendar-event-fill me-2 text-danger"></i>Informasi & Pendaftaran Kegiatan Kepemudaan</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="info-card grad-red p-3 rounded text-white h-100 d-flex flex-column justify-content-between text-center shadow">
+                            <div>
+                                <i class="bi bi-palette-fill fs-2 mb-2 d-block text-white"></i>
+                                <h5 class="fw-bold">Kreativesia Pemuda</h5>
+                                <p class="small text-white-50 text-justify">Ajang apresiasi seni, budaya, dan inovasi kreatif bagi generasi muda daerah.</p>
+                            </div>
+                            <button id="btn-reg-kreativesia" class="btn btn-sm btn-download-clear w-100 mt-2 fw-bold" onclick="openRegForm('kreativesia')">Daftar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="info-card grad-blue p-3 rounded text-white h-100 d-flex flex-column justify-content-between text-center shadow">
+                            <div>
+                                <i class="bi bi-lightbulb-fill fs-2 mb-2 d-block text-white"></i>
+                                <h5 class="fw-bold">Wirausaha Muda</h5>
+                                <p class="small text-white-50 text-justify">Program pembekalan, inkubasi bisnis, dan stimulasi wirausaha mandiri.</p>
+                            </div>
+                            <button id="btn-reg-wirausaha" class="btn btn-sm btn-download-clear w-100 mt-2 fw-bold" onclick="openRegForm('wirausaha')">Daftar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="info-card grad-yellow p-3 rounded text-white h-100 d-flex flex-column justify-content-between text-center shadow">
+                            <div>
+                                <i class="bi bi-compass-fill fs-2 mb-2 d-block text-white"></i>
+                                <h5 class="fw-bold">Pramuka</h5>
+                                <p class="small text-white-50 text-justify">Pembentukan karakter kepanduan disiplin, kepemimpinan, dan kecintaan alam.</p>
+                            </div>
+                            <button id="btn-reg-pramuka" class="btn btn-sm btn-download-clear w-100 mt-2 fw-bold" onclick="openRegForm('pramuka')">Daftar</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="info-card grad-green p-3 rounded text-white h-100 d-flex flex-column justify-content-between text-center shadow">
+                            <div>
+                                <i class="bi bi-fire fs-2 mb-2 d-block text-white"></i>
+                                <h5 class="fw-bold">Jambore Pemuda</h5>
+                                <p class="small text-white-50 text-justify">Pertemuan akbar pemuda berprestasi lintas organisasi dan kebudayaan.</p>
+                            </div>
+                            <button id="btn-reg-jambore" class="btn btn-sm btn-download-clear w-100 mt-2 fw-bold" onclick="openRegForm('jambore')">Daftar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="formPlaceholderNotice" class="bg-dark-sec p-5 rounded shadow text-center border border-secondary mt-3 animate-fade">
+                    <i class="bi bi-cursor-fill text-cyan fs-1 mb-3 d-block"></i>
+                    <h5 class="fw-bold text-white">Formulir Pendaftaran Belum Dimuat</h5>
+                    <p class="text-white-50 small mb-0">Silakan klik tombol <strong class="text-white">"Daftar"</strong> pada salah satu rumpun kartu kegiatan di atas untuk mengisi berkas pendaftaran online.</p>
+                </div>
+
+                <div id="dynamicFormContainer" class="bg-dark-sec p-4 rounded shadow d-none mt-3 border border-secondary">
+                    <div class="d-flex justify-content-between border-bottom border-secondary pb-2 mb-3">
+                        <h5 class="text-cyan fw-bold mb-0" id="formTitle">Form Pendaftaran</h5>
+                        <button type="button" class="btn-close btn-close-white" onclick="closeRegForm()"></button>
+                    </div>
+                    <form id="mainActivityForm">
+                        <input type="hidden" id="current_kegiatan_type">
+                        <div class="row g-3" id="formFieldsArea"></div>
+                        <div class="mt-4 text-end">
+                            <button type="button" class="btn btn-secondary me-2" onclick="closeRegForm()">Batal</button>
+                            <button type="submit" class="btn btn-cyan text-dark fw-bold px-4">Kirim Pendaftaran</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="section-panduan" class="content-section d-none">
+                <h4 class="fw-bold text-white mb-2"><i class="bi bi-file-earmark-arrow-down-fill me-2 text-success"></i>Dokumen Panduan Administrasi & Juknis Kegiatan</h4>
+                <p class="text-white-50 mb-3">Silakan akses berkas kelengkapan resmi dari Bidang Kepemudaan melalui tombol unduh di bawah ini.</p>
+                
+                <div class="mb-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark-sec border-secondary text-white"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchDokumen" class="form-control bg-dark text-white border-secondary" placeholder="Ketik nama file panduan administrasi atau berkas juknis untuk mencari...">
+                    </div>
+                </div>
+
+                <h5 class="text-cyan fw-bold mb-3 pb-2 border-bottom border-secondary"><i class="bi bi-folder-fill me-2"></i>I. Panduan Administrasi</h5>
+                <div class="row g-3 mb-5" id="container-panduan-cards"></div>
+
+                <h5 class="text-emerald fw-bold mb-3 pb-2 border-bottom border-secondary"><i class="bi bi-book-half me-2"></i>II. Juknis Kegiatan</h5>
+                <div class="row g-3" id="container-juknis-cards"></div>
+            </div>
+
+            <div id="section-survei" class="content-section d-none">
+                <h4 class="fw-bold text-white mb-2"><i class="bi bi-clipboard-check-fill me-2 text-purple"></i>Survei Kepuasan Layanan Website</h4>
+                <p class="text-white-50 mb-4">Evaluasi kuantitatif kepuasan publik berdasarkan instrumen resmi kuesioner.</p>
+                <div class="bg-dark-sec p-4 rounded shadow border border-secondary">
+                    <form id="satisfactionSurveyForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-white">Nama Responden (Bisa Diisi Anonim)</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="survey_nama" placeholder="Masukkan nama Anda atau ketik 'Anonim'">
+                        </div>
+
+                        <div class="table-responsive mb-4">
+                            <table class="table table-dark table-bordered text-center small align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%;">No</th>
+                                        <th style="text-align: left !important;">Pernyataan Indikator Kepuasan</th>
+                                        <th style="width: 8%;">1 (STS)</th>
+                                        <th style="width: 8%;">2 (TS)</th>
+                                        <th style="width: 8%;">3 (N)</th>
+                                        <th style="width: 8%;">4 (S)</th>
+                                        <th style="width: 8%;">5 (SS)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="surveyTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <h5 class="text-purple fw-bold border-bottom border-secondary pb-2 mb-3"><i class="bi bi-chat-left-heart-fill me-2"></i>Evaluasi Terbuka (Kualitatif)</h5>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-white">1. Fitur atau bagian mana dari website ini yang paling Anda sukai?</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="survey_suka" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-white">2. Kendala apa saja yang paling sering Anda hadapi saat mengakses website ini?</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="survey_kendala" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-white">3. Tuliskan saran, kritik, atau fitur baru yang Anda harapkan ada di website ini ke depan:</label>
+                            <textarea class="form-control bg-dark text-white border-secondary" id="survey_saran" rows="2" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-purple btn-sm fw-bold w-100 py-2 mt-2">
+                            <i class="bi bi-send-check-fill me-2"></i>KIRIM HASIL EVALUASI SISTEM
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="section-login" class="content-section d-none">
+                <h4 class="fw-bold text-white mb-4 text-center"><i class="bi bi-shield-lock-fill me-2 text-pink"></i>Pintu Masuk Dashboard Pengelola</h4>
+                <div class="row g-3 justify-content-center">
+                    <div class="col-md-4">
+                        <div class="login-selector-card p-4 rounded text-center text-white h-100" onclick="triggerLoginGate('ADMIN DISPORA')">
+                            <i class="bi bi-building-fill fs-1 text-danger mb-3 d-block"></i>
+                            <h5 class="fw-bold">ADMIN DISPORA</h5>
+                            <p class="small text-white-50">Kontrol penuh pendaftaran, berkas kegiatan, pengumuman juknis, dan pengawasan survei kepuasan pelanggan.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="login-selector-card p-4 rounded text-center text-white h-100" onclick="triggerLoginGate('ADMIN PEMUDA/OKP')">
+                            <i class="bi bi-shield-shaded fs-1 text-warning mb-3 d-block"></i>
+                            <h5 class="fw-bold">ADMIN PEMUDA/OKP</h5>
+                            <p class="small text-white-50">Kewenangan entri instrumen profil kepengurusan Organisasi Kemasyarakatan Pemuda tingkat daerah.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="login-selector-card p-4 rounded text-center text-white h-100" onclick="triggerLoginGate('ADMIN DESA/KECAMATAN')">
+                            <i class="bi bi-geo-alt-fill fs-1 text-info mb-3 d-block"></i>
+                            <h5 class="fw-bold">ADMIN DESA/KECAMATAN</h5>
+                            <p class="small text-white-50">Akses pemutakhiran berkala data kuantitatif kependudukan pemuda per wilayah desa/kelurahan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-admin-dashboard" class="content-section d-none">
+                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-4">
+                    <h4 class="fw-bold text-white mb-0" id="adminDashboardTitle">Dashboard Admin Control</h4>
+                    <button class="btn btn-sm btn-danger fw-bold" onclick="logoutAdminSystem()"><i class="bi bi-box-arrow-left me-1"></i>Keluar System</button>
+                </div>
+                <ul class="nav nav-tabs border-secondary mb-4" id="adminDashboardTabs" role="tablist"></ul>
+                <div class="tab-content" id="adminDashboardTabContent"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="loginGateModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark-sec border-secondary">
+                <div class="modal-header border-secondary text-white">
+                    <h5 class="modal-title fw-bold text-white" id="loginModalLabel">Login System</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="modalLoginForm">
+                        <input type="hidden" id="login_selected_role">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-white">User Name / ID Akun</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="login_username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-white">Password Server</label>
+                            <input type="password" class="form-control bg-dark text-white border-secondary" id="login_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-cyan text-dark w-100 fw-bold py-2 mt-2"><i class="bi bi-shield-lock-fill me-2"></i>Otentikasi Akun</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
