@@ -520,33 +520,44 @@ function renderClientCardsKegiatan() {
   container.innerHTML = htmlCards.join('');
 }
 
-// PENYESUAIAN POIN II.2: Modul Rendering Galeri Berita & Rilis Dokumentasi di Halaman Publik
+// ORESTRASI REVISI POIN II.2: Modul Rendering Berita Utama + Teaser Multi-Target 3 Berita Terbaru di Beranda Depan
 function renderClientCardsBerita() {
-  var container = document.getElementById("container-berita-cards");
-  if (!container) { return; }
+  var containerMain = document.getElementById("container-berita-cards");
+  var containerTeaser = document.getElementById("container-berita-teaser");
   
   if (DB_BERITA.length === 0) {
-    container.innerHTML = "<div class='col-12 text-center text-white-50 small py-4'>Belum ada publikasi rilis berita terbit.</div>";
+    if (containerMain) { containerMain.innerHTML = "<div class='col-12 text-center text-white-50 small py-4'>Belum ada publikasi rilis berita terbit.</div>"; }
+    if (containerTeaser) { containerTeaser.innerHTML = "<div class='col-12 text-center text-white-50 small py-4'>Belum ada rilis berita terbaru.</div>"; }
     return;
   }
   
-  var htmlCards = DB_BERITA.map(function(b) {
+  var templateCard = function(b) {
     var placeholderImg = "https://placehold.co/600x400/0f172a/06b6d4?text=DISPORA+BOLTARA";
     var finalImg = b.gambar || placeholderImg;
     return "<div class='col-md-4 mb-2'>" +
         "<div class='card bg-dark-sec border-secondary h-100 text-white shadow-sm overflow-hidden'>" +
-        "<img src='" + finalImg + "' class='card-img-top' alt='Dokumentasi Berita' style='height:175px; object-fit:cover;' onerror=\"this.src='" + placeholderImg + "'\">" +
+        "<img src='" + finalImg + "' class='card-img-top' alt='Dokumentasi Berita' style='height:165px; object-fit:cover;' onerror=\"this.src='" + placeholderImg + "'\">" +
         "<div class='card-body d-flex flex-column justify-content-between'>" +
         "<div>" +
-        "<span class='text-cyan small d-block mb-1'><i class='bi bi-calendar-event me-1'></i>" + b.tanggal + "</span>" +
-        "<h5 class='card-title fw-bold text-white' style='font-size:1.05rem;'>" + b.judul + "</h5>" +
-        "<p class='card-text text-white-50 small text-justify'>" + (b.isi.length > 130 ? b.isi.substring(0, 130) + "..." : b.isi) + "</p>" +
+        "<span class='text-cyan small d-block mb-1' style='font-size:11px;'><i class='bi bi-calendar-event me-1'></i>" + b.tanggal + "</span>" +
+        "<h5 class='card-title fw-bold text-white' style='font-size:0.98rem;'>" + b.judul + "</h5>" +
+        "<p class='card-text text-white-50 small text-justify' style='font-size:12px;'>" + (b.isi.length > 110 ? b.isi.substring(0, 110) + "..." : b.isi) + "</p>" +
         "</div>" +
         "</div>" +
         "</div>" +
         "</div>";
-  });
-  container.innerHTML = htmlCards.join('');
+  };
+
+  // 1. Render Seluruh Tumpukan Berita ke Menu Utama "BERITA & INFO"
+  if (containerMain) { 
+    containerMain.innerHTML = DB_BERITA.map(templateCard).join(''); 
+  }
+  
+  // 2. Render Potongan Eksklusif Ambil 3 Berita Paling Baru Saja untuk Dipasang di Beranda Depan
+  if (containerTeaser) { 
+    var beritaTerbaru = DB_BERITA.slice(0, 3);
+    containerTeaser.innerHTML = beritaTerbaru.map(templateCard).join(''); 
+  }
 }
 
 function openRegForm(type) {
@@ -1056,7 +1067,7 @@ function renderSubKelolaDokumen() {
       "<div class='col-md-3'><label class='form-label small'>Kategori Rumpun</label><select id='adm_doc_kat' class='form-select bg-dark text-white border-secondary'><option value='panduan'>Panduan Administrasi</option><option value='juknis'>Juknis Kegiatan</option></select></div>" +
       "<div class='col-md-3'><label class='form-label small'>Link Google Drive</label><input type='url' id='adm_doc_link' class='form-control bg-dark text-white border-secondary' required></div>" +
       "<div class='col-md-2'><label class='form-label small'>Warna Gradasi</label><select id='adm_doc_grad' class='form-select bg-dark text-white border-secondary'><option value='grad-red'>Merah</option><option value='grad-blue'>Biru</option><option value='grad-yellow'>Kuning</option><option value='grad-green'>Hijau</option></select></div>" +
-      "<div class='col-md-12 text-end'><button type='submit' id='btn-save-doc' class='btn btn-sm btn-cyan fw-bold px-4 py-2'>Terbitkan Berkas Baru</button></div>" +
+      "<div class='col-md-12 text-end'><button type='submit' id='btn-save-doc' class='btn btn-sm btn-cyan fw-bold px-4 py-2'>Terbarui Berkas Baru</button></div>" +
       "</form>" +
       "<div class='mt-3' style='max-height:150px; overflow-y:auto;'><table class='table table-dark table-bordered small text-center mb-0'><thead><tr><th>Kategori</th><th>Nama Berkas</th><th>Aksi</th></tr></thead><tbody>" + listHtml + "</tbody></table></div>"; 
 }
