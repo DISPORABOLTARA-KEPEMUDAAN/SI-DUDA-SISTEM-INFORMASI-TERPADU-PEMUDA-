@@ -1,7 +1,7 @@
 /**
- * ==========================================
- * CONTROLLER SCRIPT UTUH APLIKASI SI-DUDA
- * ==========================================
+ * ==========================================================================
+ * CONTROLLER SCRIPT UTUH APLIKASI SI-DUDA (FINAL SYSTEM CHECK)
+ * ==========================================================================
  * File: script.js
  */
 
@@ -17,8 +17,10 @@ var DB_REGISTRASI = {
 var DB_SURVEI = [];
 var DB_PANDUAN_ADMINISTRASI = [];
 var DB_JUKNIS_KEGIATAN = [];
+var DB_KEGIATAN = []; // Sinkronisasi: Penampung rumpun data kegiatan dinas dari server
+var DB_BERITA = [];   // Sinkronisasi: Penampung data rilis berita portal terpadu
 
-// Parameter Pengaturan Akses Registrasi Kegiatan
+// Parameter Pengaturan Akses Registrasi Kegiatan (Akan ditimpa otomatis oleh data server Sheets)
 var REG_STATUS = { 
   kreativesia: true, 
   wirausaha: true, 
@@ -73,11 +75,29 @@ var chartHomeOKPInstance = null;
 var chartHomePemudaInstance = null;
 var chartHomeSurveiInstance = null;
 
+// PENYESUAIAN POIN I.5: Fungsi Manajemen Animasi Memuat Data (Loading State UX Overlay)
+function showLoading() {
+  var loader = document.getElementById("ui-loading-loader");
+  if (!loader) {
+    loader = document.createElement("div");
+    loader.id = "ui-loading-loader";
+    loader.innerHTML = "<div style='position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #06b6d4;'>" +
+        "<div class='spinner-border text-cyan' role='status' style='width: 3.2rem; height: 3.2rem;'></div>" +
+        "<span class='mt-3 fw-bold small text-uppercase' style='letter-spacing: 0.12em;'>Sinkronisasi Basis Data Server Sheets...</span>" +
+        "</div>";
+    document.body.appendChild(loader);
+  }
+}
+
+function hideLoading() {
+  var loader = document.getElementById("ui-loading-loader");
+  if (loader) { loader.remove(); }
+}
+
 // Pemicu Penyiapan Komponen Saat Halaman Siap
 document.addEventListener("DOMContentLoaded", function() {
   console.log("Menginisialisasi modul SI-DUDA Sisi Klien...");
   
-  // PENYESUAIAN: Otomatis menyembunyikan sidebar di awal jika diakses via HP/Tablet
   if (window.innerWidth < 992) {
     var sidebar = document.getElementById("sidebarMenu");
     if (sidebar) sidebar.classList.remove("active");
@@ -87,37 +107,26 @@ document.addEventListener("DOMContentLoaded", function() {
   renderSurveyFormMatrix();
 
   var searchOKPElem = document.getElementById("searchOKP");
-  if (searchOKPElem) {
-    searchOKPElem.addEventListener("input", filterTableOKP);
-  }
+  if (searchOKPElem) { searchOKPElem.addEventListener("input", filterTableOKP); }
 
   var searchPemudaElem = document.getElementById("searchPemuda");
-  if (searchPemudaElem) {
-    searchPemudaElem.addEventListener("input", filterTablePemuda);
-  }
+  if (searchPemudaElem) { searchPemudaElem.addEventListener("input", filterTablePemuda); }
 
   var searchDokumenElem = document.getElementById("searchDokumen");
-  if (searchDokumenElem) {
-    searchDokumenElem.addEventListener("input", filterDokumenCards);
-  }
+  if (searchDokumenElem) { searchDokumenElem.addEventListener("input", filterDokumenCards); }
 
   var mainFormElem = document.getElementById("mainActivityForm");
-  if (mainFormElem) {
-    mainFormElem.addEventListener("submit", submitFormKegiatan);
-  }
+  if (mainFormElem) { mainFormElem.addEventListener("submit", submitFormKegiatan); }
 
   var surveyFormElem = document.getElementById("satisfactionSurveyForm");
-  if (surveyFormElem) {
-    surveyFormElem.addEventListener("submit", submitSurveiKepuasan);
-  }
+  if (surveyFormElem) { surveyFormElem.addEventListener("submit", submitSurveiKepuasan); }
 
   var loginFormElem = document.getElementById("modalLoginForm");
-  if (loginFormElem) {
-    loginFormElem.addEventListener("submit", submitLoginGate);
-  }
+  if (loginFormElem) { loginFormElem.addEventListener("submit", submitLoginGate); }
 });
 
 function loadDataFromSheets() {
+  showLoading(); // Aktifkan bayangan animasi memuat data di awal penarikan file
   console.log("Melakukan panggilan data ke server: " + SCRIPT_URL);
   fetch(SCRIPT_URL)
     .then(function(response) {
@@ -129,6 +138,16 @@ function loadDataFromSheets() {
       if (data.pemuda) { DB_PEMUDA = data.pemuda; }
       if (data.survei) { DB_SURVEI = data.survei; }
       if (data.registrasi) { DB_REGISTRASI = data.registrasi; }
+      
+      // Sinkronisasi data dinamis dari tab spreadsheet baru
+      if (data.kegiatan) { 
+        DB_KEGIATAN = data.kegiatan; 
+        data.kegiatan.forEach(function(item) {
+          REG_STATUS[item.id] = (item.status === "BUKA");
+        });
+      }
+      if (data.berita) { DB_BERITA = data.berita; }
+      
       if (data.dokumen) {
         DB_PANDUAN_ADMINISTRASI = data.dokumen.filter(function(d) {
           return d.kategori === 'panduan';
@@ -143,9 +162,13 @@ function loadDataFromSheets() {
       renderClientCardsDokumen();
       renderHomeOverviewDashboard();
       updateKegiatanButtons();
+      renderClientCardsKegiatan(); // Eksekusi pembuatan kartu kegiatan dinamis
+      renderClientCardsBerita();   // Eksekusi pembuatan galeri kartu berita dinamis
+      hideLoading(); // Matikan animasi memuat data setelah seluruh fungsi render tuntas
     })
     .catch(function(error) {
       console.error("Gagal menyinkronkan data dari spreadsheet:", error);
+      hideLoading();
     });
 }
 
@@ -222,9 +245,7 @@ function renderTableOKP() {
   var htmlRows = DB_OKP.map(function(i, idx) {
     var warnaNama = PALET_WARNA_OKP[idx % PALET_WARNA_OKP.length];
     var badgeStyle = "bg-warning";
-    if (i.sk === 'Aktif') {
-      badgeStyle = "bg-success";
-    }
+    if (i.sk === 'Aktif') { badgeStyle = "bg-success"; }
     return "<tr>" +
         "<td>" + i.no + "</td>" +
         "<td style='color:" + warnaNama + " !important; font-weight:bold;'>" + i.nama + "</td>" +
@@ -362,9 +383,7 @@ function renderHomeOverviewDashboard() {
     var sUsability = 4.8, sUI = 4.7, sContent = 4.6, sTech = 4.5, sOverall = 4.9;
     if (DB_SURVEI.length > 0) {
       var uTotal = 0; 
-      DB_SURVEI.forEach(function(s) { 
-        uTotal += Number(s.skor_rata.split(" / ")[0]) || 4.5; 
-      });
+      DB_SURVEI.forEach(function(s) { uTotal += Number(s.skor_rata.split(" / ")[0]) || 4.5; });
       var hitungRata = (uTotal / DB_SURVEI.length).toFixed(1);
       sUsability = sUI = sContent = sTech = sOverall = hitungRata;
     }
@@ -388,12 +407,17 @@ function renderHomeOverviewDashboard() {
   }
 
   var totalPendaftar = 0; 
-  for (var k in DB_REGISTRASI) { 
-    totalPendaftar += DB_REGISTRASI[k].length; 
-  }
-  document.getElementById("summary-home-kegiatan").innerText = "Total Masuk: " + totalPendaftar + " Pendaftar";
-  document.getElementById("summary-home-panduan").innerText = "Tersedia: " + (DB_PANDUAN_ADMINISTRASI.length + DB_JUKNIS_KEGIATAN.length) + " Berkas";
-  document.getElementById("summary-home-survei").innerText = "Nilai: 4.8 / 5.0 (" + DB_SURVEI.length + " Responden)";
+  for (var k in DB_REGISTRASI) { totalPendaftar += DB_REGISTRASI[k].length; }
+
+  // CRITICAL PROTECTION: Pengondisian aman pasca pembersihan paket boks kaku di index.html
+  var eKegiatan = document.getElementById("summary-home-kegiatan");
+  if (eKegiatan) { eKegiatan.innerText = "Total Masuk: " + totalPendaftar + " Pendaftar"; }
+  
+  var ePanduan = document.getElementById("summary-home-panduan");
+  if (ePanduan) { ePanduan.innerText = "Tersedia: " + (DB_PANDUAN_ADMINISTRASI.length + DB_JUKNIS_KEGIATAN.length) + " Berkas"; }
+  
+  var eSurvei = document.getElementById("summary-home-survei");
+  if (eSurvei) { eSurvei.innerText = "Nilai: 4.8 / 5.0 (" + DB_SURVEI.length + " Responden)"; }
 }
 
 function updateKegiatanButtons() {
@@ -445,7 +469,7 @@ function renderSurveyFormMatrix() {
   METRIKS_SURVEI.forEach(function(m, idx) {
     if (m.category !== currentCat) {
       currentCat = m.category;
-      html += "<tr class='bg-dark border-secondary'><td colspan='7' class='text-start text-cyan fw-bold bg-dark-sec bg-dark-sec ps-3 small'>" + currentCat + "</td></tr>";
+      html += "<tr class='bg-dark border-secondary'><td colspan='7' class='text-start text-cyan fw-bold bg-dark-sec ps-3 small'>" + currentCat + "</td></tr>";
     }
     
     var radioButtons = [1, 2, 3, 4, 5].map(function(v) {
@@ -459,6 +483,70 @@ function renderSurveyFormMatrix() {
         "</tr>";
   });
   tbody.innerHTML = html;
+}
+
+// PENYESUAIAN POIN II.4: Dinamisasi Modul Pembuatan Kartu Pendaftaran Kegiatan Berbasis Data Global Sheets
+function renderClientCardsKegiatan() {
+  var container = document.getElementById("container-kegiatan-cards");
+  if (!container) { return; }
+  
+  var htmlCards = DB_KEGIATAN.map(function(k, idx) {
+    var iconClass = "bi-fire"; 
+    if (k.id === "kreativesia") { iconClass = "bi-palette-fill"; }
+    else if (k.id === "wirausaha") { iconClass = "bi-lightbulb-fill"; }
+    else if (k.id === "pramuka") { iconClass = "bi-compass-fill"; }
+    
+    var gradColor = GRADIENT_POOL[idx % GRADIENT_POOL.length];
+    var isClosed = (k.status === "TUTUP");
+    var btnStyle = isClosed ? "btn-reg-closed" : "btn-download-clear";
+    var btnText = isClosed ? "Pendaftaran Ditutup" : "Daftar";
+    var isDisabled = isClosed ? "disabled" : "";
+    
+    return "<div class='col-md-6 col-lg-3'>" +
+        "<div class='info-card " + gradColor + " p-3 rounded text-white h-100 d-flex flex-column justify-content-between text-center shadow'>" +
+        "<div>" +
+        "<i class='bi " + iconClass + " fs-2 mb-2 d-block text-white'></i>" +
+        "<h5 class='fw-bold'>" + k.nama + "</h5>" +
+        "<p class='small text-white-50 text-justify mb-2'>" + k.deskripsi + "</p>" +
+        "<div class='p-2 bg-black bg-opacity-20 rounded small text-start border border-secondary border-opacity-20 mb-2'>" +
+        "<div class='text-cyan'><i class='bi bi-calendar-check me-1'></i>" + k.pelaksanaan + "</div>" +
+        "<div class='text-white-50' style='font-size:11px;'><i class='bi bi-card-checklist me-1'></i>" + k.syarat + "</div>" +
+        "</div>" +
+        "</div>" +
+        "<button id='btn-reg-" + k.id + "' class='btn btn-sm " + btnStyle + " w-100 mt-2 fw-bold' onclick='openRegForm(\"" + k.id + "\")' " + isDisabled + ">" + btnText + "</button>" +
+        "</div>" +
+        "</div>";
+  });
+  container.innerHTML = htmlCards.join('');
+}
+
+// PENYESUAIAN POIN II.2: Modul Rendering Galeri Berita & Rilis Dokumentasi di Halaman Publik
+function renderClientCardsBerita() {
+  var container = document.getElementById("container-berita-cards");
+  if (!container) { return; }
+  
+  if (DB_BERITA.length === 0) {
+    container.innerHTML = "<div class='col-12 text-center text-white-50 small py-4'>Belum ada publikasi rilis berita terbit.</div>";
+    return;
+  }
+  
+  var htmlCards = DB_BERITA.map(function(b) {
+    var placeholderImg = "https://placehold.co/600x400/0f172a/06b6d4?text=DISPORA+BOLTARA";
+    var finalImg = b.gambar || placeholderImg;
+    return "<div class='col-md-4 mb-2'>" +
+        "<div class='card bg-dark-sec border-secondary h-100 text-white shadow-sm overflow-hidden'>" +
+        "<img src='" + finalImg + "' class='card-img-top' alt='Dokumentasi Berita' style='height:175px; object-fit:cover;' onerror=\"this.src='" + placeholderImg + "'\">" +
+        "<div class='card-body d-flex flex-column justify-content-between'>" +
+        "<div>" +
+        "<span class='text-cyan small d-block mb-1'><i class='bi bi-calendar-event me-1'></i>" + b.tanggal + "</span>" +
+        "<h5 class='card-title fw-bold text-white' style='font-size:1.05rem;'>" + b.judul + "</h5>" +
+        "<p class='card-text text-white-50 small text-justify'>" + (b.isi.length > 130 ? b.isi.substring(0, 130) + "..." : b.isi) + "</p>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>";
+  });
+  container.innerHTML = htmlCards.join('');
 }
 
 function openRegForm(type) {
@@ -537,9 +625,7 @@ function executePostUploadKegiatan(payload) {
     headers: { "Content-Type": "text/plain" }, 
     body: JSON.stringify(payload) 
   })
-  .then(function(res) {
-    return res.text();
-  })
+  .then(function(res) { return res.text(); })
   .then(function(text) { 
     var resData = JSON.parse(text);
     if (resData.status === "success") { 
@@ -548,9 +634,7 @@ function executePostUploadKegiatan(payload) {
       loadDataFromSheets(); 
     } 
   })
-  .catch(function(err) {
-    alert("Gagal mengunggah berkas ke server.");
-  })
+  .catch(function(err) { alert("Gagal mengunggah berkas ke server."); })
   .finally(function() { 
     btn.disabled = false; 
     btn.innerText = "Kirim Pendaftaran"; 
@@ -587,9 +671,7 @@ function submitSurveiKepuasan(e) {
     headers: { "Content-Type": "text/plain" }, 
     body: JSON.stringify(payload) 
   })
-  .then(function(res) {
-    return res.text();
-  })
+  .then(function(res) { return res.text(); })
   .then(function(text) { 
     alert("Kuesioner Sukses Tersimpan!"); 
     document.getElementById("satisfactionSurveyForm").reset(); 
@@ -621,9 +703,7 @@ function submitLoginGate(e) {
       role: role 
     }) 
   })
-  .then(function(res) {
-    return res.text();
-  })
+  .then(function(res) { return res.text(); })
   .then(function(text) {
     try {
       var resData = JSON.parse(text);
@@ -635,13 +715,9 @@ function submitLoginGate(e) {
       } else { 
         alert("Akses Ditolak: Kombinasi Kredensial Tidak Sesuai!"); 
       }
-    } catch (err) { 
-      alert("Gagal mengurai respon otentikasi server."); 
-    }
+    } catch (err) { alert("Gagal mengurai respon otentikasi server."); }
   })
-  .catch(function(err) {
-    alert("Eror Jaringan Komunikasi Server.");
-  })
+  .catch(function(err) { alert("Eror Jaringan Komunikasi Server."); })
   .finally(function() { 
     btn.disabled = false; 
     btn.innerHTML = "<i class='bi bi-shield-lock-fill me-2'></i>Otentikasi Akun"; 
@@ -658,8 +734,9 @@ function openAdminDashboard(role) {
   contentDiv.innerHTML = "";
 
   if (role === "ADMIN DISPORA") {
-    buildAdminTab(tabsUl, contentDiv, "t1", "Buka Tutup Pendaftaran", renderSubBukaTutup(), true);
+    buildAdminTab(tabsUl, contentDiv, "t1", "Informasi & Akses Gerbang", renderSubBukaTutup(), true);
     buildAdminTab(tabsUl, contentDiv, "t2", "Daftar Peserta Kegiatan", renderSubPesertaKegiatan());
+    buildAdminTab(tabsUl, contentDiv, "t8", "Kelola Berita Portal", renderSubKelolaBerita()); // Tambahan Berita Modul
     buildAdminTab(tabsUl, contentDiv, "t3", "Edit Data OKP", renderSubKelolaOKP());
     buildAdminTab(tabsUl, contentDiv, "t4", "Edit Data Pemuda", renderSubKelolaPemuda());
     buildAdminTab(tabsUl, contentDiv, "t5", "Kelola Panduan & Juknis", renderSubKelolaDokumen());
@@ -673,32 +750,154 @@ function openAdminDashboard(role) {
 }
 
 function buildAdminTab(ul, content, id, title, htmlContent, isActive) {
-  var activeClass = "";
-  if (isActive) { activeClass = "active"; }
+  var activeClass = isActive ? "active" : "";
   ul.innerHTML += "<li class='nav-item'><button class='nav-link " + activeClass + "' id='" + id + "-tab' data-bs-toggle='tab' data-bs-target='#" + id + "-panel' type='button'>" + title + "</button></li>";
   
-  var showActivePanel = "";
-  if (isActive) { showActivePanel = "show active"; }
+  var showActivePanel = isActive ? "show active" : "";
   content.innerHTML += "<div class='tab-pane fade " + showActivePanel + "' id='" + id + "-panel'><div class='bg-dark-sec p-3 rounded border border-secondary mt-3'>" + htmlContent + "</div></div>";
 }
 
+// PENYESUAIAN POIN II.5: Transformasi Fungsi Manajemen Buka-Tutup Akses Kegiatan Sinkronisasi Dua Arah Sheets
 function renderSubBukaTutup() { 
-  var buttonsArea = Object.keys(REG_STATUS).map(function(k) {
-    var styleBtn = "btn-secondary";
-    var statusText = "TUTUP";
-    if (REG_STATUS[k]) {
-      styleBtn = "btn-success";
-      statusText = "BUKA";
-    }
-    return "<div class='col-md-3'><button class='btn btn-sm w-100 fw-bold " + styleBtn + "' onclick='adminToggleState(\"" + k + "\")'>" + k.toUpperCase() + ": " + statusText + "</button></div>";
+  var rowsHtml = DB_KEGIATAN.map(function(k) {
+    var badgeClass = (k.status === "BUKA") ? "bg-success" : "bg-secondary";
+    return "<tr>" +
+        "<td><span class='badge " + badgeClass + "'>" + k.status + "</span></td>" +
+        "<td class='fw-bold text-white'>" + k.nama + "</td>" +
+        "<td>" + k.pelaksanaan + "</td>" +
+        "<td>" + k.syarat + "</td>" +
+        "<td><button class='btn btn-xs btn-warning py-0 px-2 fw-bold' style='font-size:11px;' onclick=\"populateKegiatanEf(" + k.rowIndex + ", '" + k.id + "', '" + k.nama.replace(/'/g, "\\'") + "', '" + k.pelaksanaan.replace(/'/g, "\\'") + "', '" + k.syarat.replace(/'/g, "\\'") + "', '" + k.status + "')\">Pilih</button></td>" +
+        "</tr>";
   }).join('');
-  return "<h6 class='text-cyan fw-bold mb-3'>SINKRONISASI GERBANG PENDAFTARAN</h6><div class='row g-2'>" + buttonsArea + "</div>"; 
+
+  return "<h6 class='text-cyan fw-bold mb-3'>MANAJEMEN INFORMASI RUMPUN KEGIATAN (DUA ARAH)</h6>" +
+      "<form onsubmit='saveAdminKegiatan(event)' class='row g-3'>" +
+      "<input type='hidden' id='adm_keg_row_index' value=''><input type='hidden' id='adm_keg_id' value=''>" +
+      "<div class='col-md-3'><label class='form-label small'>Nama Kegiatan</label><input type='text' id='adm_keg_nama' class='form-control bg-dark text-white border-secondary' readonly></div>" +
+      "<div class='col-md-3'><label class='form-label small'>Waktu Pelaksanaan</label><input type='text' id='adm_keg_pelaksanaan' class='form-control bg-dark text-white border-secondary' required></div>" +
+      "<div class='col-md-3'><label class='form-label small'>Persyaratan Berkas</label><input type='text' id='adm_keg_syarat' class='form-control bg-dark text-white border-secondary' required></div>" +
+      "<div class='col-md-3'><label class='form-label small'>Gerbang Akses</label><select id='adm_keg_status' class='form-select bg-dark text-white border-secondary'><option value='BUKA'>BUKA</option><option value='TUTUP'>TUTUP</option></select></div>" +
+      "<div class='col-md-12 text-end'><button type='submit' id='btn-save-keg' class='btn btn-sm btn-cyan fw-bold px-4 py-2' disabled>Pilih Baris Kegiatan Terlebih Dahulu</button></div>" +
+      "</form>" +
+      "<div class='mt-4'><h6 class='text-white small fw-bold mb-2'>Daftar Skema Rumpun Kegiatan Berjalan:</h6>" +
+      "<div class='table-responsive'><table class='table table-dark table-striped table-bordered small text-center mb-0'><thead><tr><th>Status</th><th>Nama Kegiatan</th><th>Pelaksanaan</th><th>Persyaratan</th><th>Aksi</th></tr></thead><tbody>" + (rowsHtml || "<tr><td colspan='5'>Kosong / Lembar Data Belum Sinkron</td></tr>") + "</tbody></table></div></div>"; 
 }
 
-function adminToggleState(key) { 
-  REG_STATUS[key] = !REG_STATUS[key]; 
-  updateKegiatanButtons(); 
-  openAdminDashboard("ADMIN DISPORA"); 
+function populateKegiatanEf(rIdx, id, nama, pelaksanaan, syarat, status) {
+  document.getElementById("adm_keg_row_index").value = rIdx;
+  document.getElementById("adm_keg_id").value = id;
+  document.getElementById("adm_keg_nama").value = nama;
+  document.getElementById("adm_keg_pelaksanaan").value = pelaksanaan;
+  document.getElementById("adm_keg_syarat").value = syarat;
+  document.getElementById("adm_keg_status").value = status;
+  
+  var btn = document.getElementById("btn-save-keg");
+  btn.innerText = "Perbarui Lembar Data Sheets (Update)";
+  btn.disabled = false;
+}
+
+function saveAdminKegiatan(e) {
+  e.preventDefault();
+  showLoading();
+  var payload = {
+    action: "kegiatan_update",
+    rowIndex: document.getElementById("adm_keg_row_index").value,
+    id: document.getElementById("adm_keg_id").value,
+    pelaksanaan: document.getElementById("adm_keg_pelaksanaan").value,
+    syarat: document.getElementById("adm_keg_syarat").value,
+    status: document.getElementById("adm_keg_status").value
+  };
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload)
+  })
+  .then(function(res) { return res.text(); })
+  .then(function(t) {
+    alert("Data Pengaturan Kegiatan Berhasil Sinkron!");
+    loadDataFromSheets();
+    openAdminDashboard("ADMIN DISPORA");
+  })
+  .catch(function(err) { alert("Gagal memperbarui konfigurasi server."); })
+  .finally(function() { hideLoading(); });
+}
+
+// PENYESUAIAN POIN II.3: Modul Form Manajemen Pengelolaan Rilis Berita Publikasi (Dua Arah Server)
+function renderSubKelolaBerita() {
+  var rowsHtml = DB_BERITA.map(function(b) {
+    return "<tr>" +
+        "<td>" + b.tanggal + "</td>" +
+        "<td class='fw-bold text-white text-start'>" + b.judul + "</td>" +
+        "<td><button class='btn btn-xs btn-warning py-0 px-2 fw-bold' style='font-size:11px;' onclick=\"populateBeritaEf(" + b.rowIndex + ", " + b.no + ", '" + b.tanggal + "', '" + b.judul.replace(/'/g, "\\'") + "', '" + b.isi.replace(/'/g, "\\'") + "')\">Pilih</button></td>" +
+        "</tr>";
+  }).join('');
+
+  return "<h6 class='text-cyan fw-bold mb-3'>MANAJEMEN ARTIKEL PENGUMUMAN & BERITA PORTAL BERANDA</h6>" +
+      "<form onsubmit='saveAdminBerita(event)' class='row g-3'>" +
+      "<input type='hidden' id='adm_ber_row_index' value=''><input type='hidden' id='adm_ber_no' value=''>" +
+      "<div class='col-md-6'><label class='form-label small'>Judul Utama Berita</label><input type='text' id='adm_ber_judul' class='form-control bg-dark text-white border-secondary' required></div>" +
+      "<div class='col-md-6'><label class='form-label small'>Unggah Gambar Dokumentasi (Opsional / .jpg / .png)</label><input type='file' id='adm_ber_file' class='form-control bg-dark text-white border-secondary'></div>" +
+      "<div class='col-md-12'><label class='form-label small'>Isi Lengkap Rilis Pers Pengumuman</label><textarea id='adm_ber_isi' class='form-control bg-dark text-white border-secondary' rows='3' required></textarea></div>" +
+      "<div class='col-md-12 text-end'><button type='submit' id='btn-save-berita' class='btn btn-sm btn-cyan fw-bold px-4 py-2'>Terbitkan Berita Baru</button></div>" +
+      "</form>" +
+      "<div class='mt-4'><h6 class='text-white small fw-bold mb-2'>Daftar Pengumuman Terbit:</h6>" +
+      "<div class='table-responsive' style='max-height:160px;'><table class='table table-dark table-striped table-bordered small text-center mb-0'><thead><tr><th>Tanggal</th><th>Judul Artikel</th><th>Aksi</th></tr></thead><tbody>" + (rowsHtml || "<tr><td colspan='3'>Kosong / Belum Ada Pengumuman</td></tr>") + "</tbody></table></div></div>";
+}
+
+function populateBeritaEf(rIdx, no, tanggal, judul, isi) {
+  document.getElementById("adm_ber_row_index").value = rIdx;
+  document.getElementById("adm_ber_no").value = no;
+  document.getElementById("adm_ber_judul").value = judul;
+  document.getElementById("adm_ber_isi").value = isi;
+  document.getElementById("btn-save-berita").innerText = "Perbarui Artikel Berita (Update)";
+}
+
+function saveAdminBerita(e) {
+  e.preventDefault();
+  showLoading();
+  var rIdx = document.getElementById("adm_ber_row_index").value;
+  var fileInput = document.getElementById("adm_ber_file");
+
+  var sendDataBerita = function(base64Data, fileName, fileMime) {
+    var payload = {
+      action: "berita",
+      rowIndex: rIdx || null,
+      no: document.getElementById("adm_ber_no").value || null,
+      tanggal: new Date().getFullYear() + "-" + String(new Date().getMonth() + 1).padStart(2, '0') + "-" + String(new Date().getDate()).padStart(2, '0'),
+      judul: document.getElementById("adm_ber_judul").value,
+      isi: document.getElementById("adm_ber_isi").value,
+      fileData: base64Data || null,
+      fileName: fileName || null,
+      fileMime: fileMime || null
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res) { return res.text(); })
+    .then(function(t) {
+      alert("Portal Artikel Pengumuman Sukses Diperbarui!");
+      loadDataFromSheets();
+      openAdminDashboard("ADMIN DISPORA");
+    })
+    .catch(function(err) { alert("Gagal mengamankan berkas rilis berita."); })
+    .finally(function() { hideLoading(); });
+  };
+
+  if (fileInput.files.length > 0) {
+    var file = fileInput.files[0];
+    var reader = new FileReader();
+    reader.onload = function(evt) {
+      var base64 = evt.target.result.split(',')[1];
+      sendDataBerita(base64, file.name, file.type);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    sendDataBerita(null, null, null);
+  }
 }
 
 function renderSubPesertaKegiatan() {
@@ -787,9 +986,7 @@ function saveAdminOKP(e) {
     headers: { "Content-Type": "text/plain" }, 
     body: JSON.stringify(payloadObj) 
   })
-  .then(function(res) {
-    return res.text();
-  })
+  .then(function(res) { return res.text(); })
   .then(function(t) { 
     alert("Data OKP Sukses Terbincang Dua Arah!"); 
     loadDataFromSheets(); 
@@ -838,9 +1035,7 @@ function saveAdminPemuda(e) {
       p: document.getElementById("adm_pmd_p").value 
     }) 
   })
-  .then(function(res) {
-    return res.text();
-  })
+  .then(function(res) { return res.text(); })
   .then(function(t) { 
     alert("Kuantitas Penduduk Sukses Ditimpa!"); 
     loadDataFromSheets(); 
@@ -876,6 +1071,11 @@ function populateDocEf(rIdx, no, nama, link, grad, kategori) {
   document.getElementById("btn-save-doc").innerText = "Perbarui Berkas Terbit (Update)";
 }
 
+function updateAdminDashboardRoleView() {
+  var currentRole = document.getElementById("login_selected_role").value;
+  if (currentRole) { openAdminDashboard(currentRole); }
+}
+
 function saveAdminDokumen(e) { 
   e.preventDefault(); 
   var sendObj = { 
@@ -894,9 +1094,7 @@ function saveAdminDokumen(e) {
     headers: { "Content-Type": "text/plain" }, 
     body: JSON.stringify(sendObj) 
   })
-  .then(function(res) {
-    return res.text();
-  })
+  .then(function(res) { return res.text(); })
   .then(function(t) { 
     alert("Database Berkas Google Sheet Diperbarui!"); 
     loadDataFromSheets(); 
@@ -934,9 +1132,7 @@ function saveAdminProposal(e) {
         headers: { "Content-Type": "text/plain" }, 
         body: JSON.stringify(payloadObj) 
       })
-      .then(function(res) {
-        return res.json();
-      })
+      .then(function(res) { return res.json(); })
       .then(function(data) { 
         if (data.status === "success") { 
           alert("Proposal Berhasil Diunggah!"); 
