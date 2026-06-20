@@ -1,7 +1,8 @@
 /**
- * ==========================================
- * SHEET DEKORASI GAYA PREMIUM SI-DUDA
- * ==========================================
+ * ==========================================================================
+ * SHEET DEKORASI GAYA PREMIUM SI-DUDA (FINAL FULL-CENTERED ADAPTIVE)
+ * DISPORA BOLAANG MONGONDOW UTARA
+ * ==========================================================================
  * File: style.css
  */
 
@@ -45,7 +46,9 @@ body {
 .text-purple { color: var(--purple-accent) !important; }
 .text-pink { color: var(--pink-accent) !important; }
 
-/* KONSOL SISTEM SIDEBAR */
+/* ==========================================================================
+   KONSOL SISTEM SIDEBAR
+   ========================================================================== */
 .sidebar {
     width: var(--sidebar-width);
     height: calc(100vh - var(--navbar-height));
@@ -77,7 +80,9 @@ body {
     color: var(--cyan-accent) !important; 
 }
 
-/* BLOK FRAME UTAMA */
+/* ==========================================================================
+   BLOK FRAME UTAMA & GRID LAYOUT
+   ========================================================================== */
 .main-content { 
     margin-left: 0; 
     transition: all 0.3s ease; 
@@ -108,7 +113,9 @@ body {
     transform: translateY(-5px); 
 }
 
-/* GRADIENT POOL GENERATOR */
+/* ==========================================================================
+   GRADIENT POOL GENERATOR
+   ========================================================================== */
 .grad-red { background: linear-gradient(135deg, #ff416c, #ff4b2b) !important; }
 .grad-blue { background: linear-gradient(135deg, #00c6ff, #0072ff) !important; }
 .grad-yellow { background: linear-gradient(135deg, #f9d423, #ff4e50) !important; }
@@ -118,36 +125,37 @@ body {
 .grad-pink { background: linear-gradient(135deg, #f472b6, #be185d) !important; }
 .grad-cyan { background: linear-gradient(135deg, #22d3ee, #0891b2) !important; }
 
+/* ==========================================================================
+   REVISI GRAFIK: Kompak, Ceper, & Mendukung Grid Berdampingan
+   ========================================================================== */
 .dashboard-chart-box { 
-    min-height: 430px; 
+    min-height: 340px; 
 }
 
 .chart-container-canvas { 
     position: relative; 
-    height: 350px; 
+    height: 260px; 
     width: 100%; 
 }
 
-/* PENYESUAIAN POIN I.3: Refinement Kartu Informasi Beranda (Mengurangi Noise Gradasi Ramai) */
+/* Refinement Kartu Informasi Beranda */
 .info-card { 
-    background: #1e293b !important; /* Mengubah gradasi mencolok menjadi Dark Slate premium */
-    border: 1px solid rgba(6, 182, 212, 0.15) !important; /* Border tipis warna cyan samar */
+    background: #1e293b !important; 
+    border: 1px solid rgba(6, 182, 212, 0.15) !important; 
     transition: all 0.3s ease-in-out;
     position: relative;
     overflow: hidden;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); 
 }
 
-/* Efek Hover Halus saat Kartu Disorot Mouse */
 .info-card:hover {
     transform: translateY(-4px);
-    border-color: var(--cyan-accent) !important; /* Border menyala cyan penuh */
+    border-color: var(--cyan-accent) !important; 
     box-shadow: 0 8px 20px rgba(6, 182, 212, 0.1) !important;
 }
 
-/* Memastikan ikon di dalam kartu senada dengan tema website */
 .info-card i {
-    color: var(--cyan-accent) !important; /* Semua ikon otomatis menjadi warna cyan neon */
+    color: var(--cyan-accent) !important; 
 }
 
 .text-justify { 
@@ -169,62 +177,106 @@ body {
     box-shadow: none; 
 }
 
-/* PENYESUAIAN POIN I.4: DESAIN TABEL RESPONSIVE PREMIUM (BEBAS CUT-OFF DI HP) */
+/* ==========================================================================
+   REVISI FIX TABEL: ADAPTIF PENUH (ANTI-GESER & AUTO BERSUSUN KE BAWAH DI HP)
+   ========================================================================== */
 .table-responsive {
     border-radius: 8px;
-    overflow-x: auto !important; /* FIX: Mengaktifkan fungsi geser kanan-kiri di HP */
-    overflow-y: hidden;          /* Mencegah kebocoran scroll vertikal */
-    -webkit-overflow-scrolling: touch; /* Membuat scroll di iPhone/Android menjadi sangat mulus */
-}
-
-/* Memastikan teks kolom tidak tumpang tindih atau teremas paksa di layar kecil */
-.table th, .table td {
-    white-space: nowrap !important; 
+    overflow-x: hidden !important; /* Mengunci total agar layar HP tidak bisa goyang/geser kanan-kiri */
+    overflow-y: hidden;          
+    width: 100% !important;
 }
 
 .table {
+    table-layout: auto !important; /* Membiarkan browser membagi lebar kolom secara fleksibel */
+    width: 100% !important;
     border-collapse: separate !important;
-    border-spacing: 0 6px !important; /* Memberikan jarak antar baris agar terlihat melayang */
-    background: transparent !important;
+    border-spacing: 0 4px !important; 
+    margin-top: 4px;
+}
+
+/* Formula Utama: Mengaktifkan teks bersusun ke bawah secara rapi */
+.table th, .table td {
+    white-space: normal !important;   /* Mengizinkan teks patah/turun ke bawah jika layar sempit */
+    word-wrap: break-word !important;  /* Memotong kata yang terlalu panjang dengan aman */
+    overflow-wrap: break-word !important;
+    vertical-align: middle !important; /* Menjaga data di sebelahnya tetap tegak lurus di tengah baris */
 }
 
 .table th { 
-    background-color: #0f172a !important; /* Hitam pekat obsidian */
+    background-color: #0f172a !important; 
     color: var(--cyan-accent) !important; 
     font-size: 0.75rem; 
-    font-weight: 600; 
+    font-weight: 700; 
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 14px 16px !important;
+    letter-spacing: 0.03em;
+    padding: 10px 8px !important; 
     border: none !important;
 }
 
 .table tbody tr {
-    background-color: #1e293b !important; /* Baris abu-abu gelap slate */
+    background-color: #1e293b !important; 
     transition: all 0.2s ease;
 }
 
 .table tbody tr:hover { 
-    background-color: #273549 !important; /* Sedikit lebih terang */
-    transform: scale(1.005);
+    background-color: #243246 !important; 
+    transform: scale(1.001);
 }
 
 .table td { 
-    padding: 12px 16px !important; /* Ruang dalam baris jauh lebih lega */
+    padding: 8px 8px !important; 
     color: var(--text-light) !important; 
-    font-size: 0.88rem; 
-    vertical-align: middle;
+    font-size: 0.8rem; 
     border: none !important;
 }
 
-/* Trik CSS: Melengkungkan sudut hanya di ujung kiri dan kanan setiap baris */
+/* Melengkungkan sudut baris melayang */
 .table tbody tr td:first-child {
-    border-top-left-radius: 8px !important;
-    border-bottom-left-radius: 8px !important;
+    border-top-left-radius: 6px !important;
+    border-bottom-left-radius: 6px !important;
 }
 .table tbody tr td:last-child {
-    border-top-right-radius: 8px !important;
-    border-bottom-right-radius: 8px !important;
+    border-top-right-radius: 6px !important;
+    border-bottom-right-radius: 6px !important;
+}
+
+/* ==========================================================================
+   REVISI RE-ALIGN: STRUKTUR PENULISAN TABEL RATA TENGAH MUTLAK (ALL CENTERED)
+   ========================================================================== */
+#tableOKP th, #tableOKP td,
+#tablePemuda th, #tablePemuda td {
+    text-align: center !important; /* FIX: Seluruh teks nama, data, dan angka dikunci rata tengah */
+}
+
+/* Proporsi lebar kolom fleksibel berbasis persentase agar seimbang di layar HP */
+#tableOKP th:nth-child(1), #tableOKP td:nth-child(1),
+#tablePemuda th:nth-child(1), #tablePemuda td:nth-child(1) {
+    width: 6% !important; /* Lebar kolom Nomor Urut */
+}
+
+#tableOKP th:nth-child(6), #tableOKP td:nth-child(6) {
+    width: 20% !important; /* Lebar kolom Status Keaktifan OKP */
+}
+
+#tablePemuda th:nth-child(4), #tablePemuda td:nth-child(4),
+#tablePemuda th:nth-child(5), #tablePemuda td:nth-child(5),
+#tablePemuda th:nth-child(6), #tablePemuda td:nth-child(6) {
+    width: 18% !important; /* Lebar seimbang lajur angka Kuantitas Pemuda (L, P, Total) */
+}
+
+/* ==========================================================================
+   TOMBOL SISTEM & NAVIGASI TAB MODAL
+   ========================================================================== */
+.btn-outline-cyan {
+    border: 1px solid var(--cyan-accent);
+    color: var(--cyan-accent);
+    background: transparent;
+    transition: all 0.2s;
+}
+.btn-outline-cyan:hover {
+    background: var(--cyan-accent);
+    color: var(--dark-prime);
 }
 
 .login-selector-card { 
