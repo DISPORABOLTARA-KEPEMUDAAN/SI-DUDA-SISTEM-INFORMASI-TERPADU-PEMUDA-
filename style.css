@@ -169,10 +169,17 @@ body {
     box-shadow: none; 
 }
 
-/* PENYESUAIAN POIN I.4: DESAIN TABEL RESPONSIVE PREMIUM (MELAYANG & SUDUT TUMPUL) */
+/* PENYESUAIAN POIN I.4: DESAIN TABEL RESPONSIVE PREMIUM (BEBAS CUT-OFF DI HP) */
 .table-responsive {
     border-radius: 8px;
-    overflow: hidden;
+    overflow-x: auto !important; /* FIX: Mengaktifkan fungsi geser kanan-kiri di HP */
+    overflow-y: hidden;          /* Mencegah kebocoran scroll vertikal */
+    -webkit-overflow-scrolling: touch; /* Membuat scroll di iPhone/Android menjadi sangat mulus */
+}
+
+/* Memastikan teks kolom tidak tumpang tindih atau teremas paksa di layar kecil */
+.table th, .table td {
+    white-space: nowrap !important; 
 }
 
 .table {
