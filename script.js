@@ -3,7 +3,6 @@
  * CONTROLLER SCRIPT UTUH APLIKASI SI-DUDA
  * ==========================================
  * File: script.js
- * Deskripsi: Penanganan Sinkronisasi Sisi Klien, DOM Renderer, & RBAC Dashboard
  */
 
 // Inisialisasi Koleksi Global Buffer Data
@@ -77,6 +76,13 @@ var chartHomeSurveiInstance = null;
 // Pemicu Penyiapan Komponen Saat Halaman Siap
 document.addEventListener("DOMContentLoaded", function() {
   console.log("Menginisialisasi modul SI-DUDA Sisi Klien...");
+  
+  // PENYESUAIAN: Otomatis menyembunyikan sidebar di awal jika diakses via HP/Tablet
+  if (window.innerWidth < 992) {
+    var sidebar = document.getElementById("sidebarMenu");
+    if (sidebar) sidebar.classList.remove("active");
+  }
+
   loadDataFromSheets();
   renderSurveyFormMatrix();
 
