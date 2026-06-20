@@ -1,6 +1,7 @@
 /**
  * ==========================================================================
- * CONTROLLER SCRIPT UTUH APLIKASI SI-DUDA (FINAL SYSTEM CHECK)
+ * CONTROLLER SCRIPT UTUH APLIKASI SI-DUDA (FINAL CLEAN TEXT PRODUCTION)
+ * DISPORA BOLAANG MONGONDOW UTARA
  * ==========================================================================
  * File: script.js
  */
@@ -59,23 +60,12 @@ var METRIKS_SURVEI = [
 // Tautan Utama Endpoint Google Apps Script Server
 var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypdA5KV29lQSwJAsxsnm5nm8Pj97Ylzr_BIiQISPlrMuPLj8nCaBOq5SnMrfb16pqpeg/exec";
 
-var PALET_WARNA_OKP = ["#22d3ee", "#34d399", "#c084fc", "#f472b6", "#fbbf24", "#60a5fa"];
-
-var STYLING_KECAMATAN = {
-  "Kaidipang": { border: "5px solid #06b6d4", bg: "rgba(6, 182, 212, 0.12)" },
-  "Pinogaluman": { border: "5px solid #a855f7", bg: "rgba(168, 85, 247, 0.12)" },
-  "Bolangitang Timur": { border: "5px solid #10b981", bg: "rgba(16, 185, 129, 0.12)" },
-  "Bolangitang Barat": { border: "5px solid #f59e0b", bg: "rgba(245, 158, 11, 0.12)" },
-  "Bintauna": { border: "5px solid #ec4899", bg: "rgba(236, 72, 153, 0.12)" },
-  "Sangkub": { border: "5px solid #3b82f6", bg: "rgba(59, 130, 246, 0.12)" }
-};
-
 var chartKecamatanInstance = null;
 var chartHomeOKPInstance = null;
 var chartHomePemudaInstance = null;
 var chartHomeSurveiInstance = null;
 
-// PENYESUAIAN POIN I.5: Fungsi Manajemen Animasi Memuat Data (Loading State UX Overlay)
+// Fungsi Manajemen Animasi Memuat Data (Loading State UX Overlay)
 function showLoading() {
   var loader = document.getElementById("ui-loading-loader");
   if (!loader) {
@@ -126,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function loadDataFromSheets() {
-  showLoading(); // Aktifkan bayangan animasi memuat data di awal penarikan file
+  showLoading(); 
   console.log("Melakukan panggilan data ke server: " + SCRIPT_URL);
   fetch(SCRIPT_URL)
     .then(function(response) {
@@ -139,7 +129,6 @@ function loadDataFromSheets() {
       if (data.survei) { DB_SURVEI = data.survei; }
       if (data.registrasi) { DB_REGISTRASI = data.registrasi; }
       
-      // Sinkronisasi data dinamis dari tab spreadsheet baru
       if (data.kegiatan) { 
         DB_KEGIATAN = data.kegiatan; 
         data.kegiatan.forEach(function(item) {
@@ -162,9 +151,9 @@ function loadDataFromSheets() {
       renderClientCardsDokumen();
       renderHomeOverviewDashboard();
       updateKegiatanButtons();
-      renderClientCardsKegiatan(); // Eksekusi pembuatan kartu kegiatan dinamis
-      renderClientCardsBerita();   // Eksekusi pembuatan galeri kartu berita dinamis
-      hideLoading(); // Matikan animasi memuat data setelah seluruh fungsi render tuntas
+      renderClientCardsKegiatan(); 
+      renderClientCardsBerita();   
+      hideLoading(); 
     })
     .catch(function(error) {
       console.error("Gagal menyinkronkan data dari spreadsheet:", error);
@@ -238,17 +227,17 @@ function showSection(id) {
   }
 }
 
+// REVISI: Membersihkan teks warna pelangi kaku pada nama OKP menjadi Putih Bersih Formal
 function renderTableOKP() {
   var tbody = document.querySelector("#tableOKP tbody");
   if (!tbody) { return; }
   
-  var htmlRows = DB_OKP.map(function(i, idx) {
-    var warnaNama = PALET_WARNA_OKP[idx % PALET_WARNA_OKP.length];
+  var htmlRows = DB_OKP.map(function(i) {
     var badgeStyle = "bg-warning";
     if (i.sk === 'Aktif') { badgeStyle = "bg-success"; }
     return "<tr>" +
         "<td>" + i.no + "</td>" +
-        "<td style='color:" + warnaNama + " !important; font-weight:bold;'>" + i.nama + "</td>" +
+        "<td class='fw-bold text-white'>" + i.nama + "</td>" + // FIX: Menggunakan warna putih formal modifikasi dashboard
         "<td>" + i.tingkat + "</td>" +
         "<td>" + i.ketua + "</td>" +
         "<td>" + i.alamat + "</td>" +
@@ -271,9 +260,9 @@ function renderTablePemuda() {
   
   var htmlRows = DB_PEMUDA.map(function(i) {
     var style = STYLING_KECAMATAN[i.kec] || { border: "none", bg: "transparent" };
-    return "<tr style='border-left: " + style.border + "; background-color: " + style.bg + " !important;'>" +
+    return "<tr style='border-left: " + style.border + "; background-color: " + style.bg + " !important;'>".replace(" !important", "") +
         "<td>" + i.no + "</td>" +
-        "<td class='fw-bold'>" + i.kec + "</td>" +
+        "<td class='fw-bold text-white-90'>" + i.kec + "</td>" +
         "<td>" + i.desa + "</td>" +
         "<td>" + i.l.toLocaleString('id-ID') + "</td>" +
         "<td>" + i.p.toLocaleString('id-ID') + "</td>" +
@@ -409,7 +398,6 @@ function renderHomeOverviewDashboard() {
   var totalPendaftar = 0; 
   for (var k in DB_REGISTRASI) { totalPendaftar += DB_REGISTRASI[k].length; }
 
-  // CRITICAL PROTECTION: Pengondisian aman pasca pembersihan paket boks kaku di index.html
   var eKegiatan = document.getElementById("summary-home-kegiatan");
   if (eKegiatan) { eKegiatan.innerText = "Total Masuk: " + totalPendaftar + " Pendaftar"; }
   
@@ -485,7 +473,6 @@ function renderSurveyFormMatrix() {
   tbody.innerHTML = html;
 }
 
-// PENYESUAIAN POIN II.4: Dinamisasi Modul Pembuatan Kartu Pendaftaran Kegiatan Berbasis Data Global Sheets
 function renderClientCardsKegiatan() {
   var container = document.getElementById("container-kegiatan-cards");
   if (!container) { return; }
@@ -520,7 +507,6 @@ function renderClientCardsKegiatan() {
   container.innerHTML = htmlCards.join('');
 }
 
-// ORESTRASI REVISI POIN II.2: Modul Rendering Berita Utama + Teaser Multi-Target 3 Berita Terbaru di Beranda Depan
 function renderClientCardsBerita() {
   var containerMain = document.getElementById("container-berita-cards");
   var containerTeaser = document.getElementById("container-berita-teaser");
@@ -548,12 +534,10 @@ function renderClientCardsBerita() {
         "</div>";
   };
 
-  // 1. Render Seluruh Tumpukan Berita ke Menu Utama "BERITA & INFO"
   if (containerMain) { 
     containerMain.innerHTML = DB_BERITA.map(templateCard).join(''); 
   }
   
-  // 2. Render Potongan Eksklusif Ambil 3 Berita Paling Baru Saja untuk Dipasang di Beranda Depan
   if (containerTeaser) { 
     var beritaTerbaru = DB_BERITA.slice(0, 3);
     containerTeaser.innerHTML = beritaTerbaru.map(templateCard).join(''); 
@@ -747,7 +731,7 @@ function openAdminDashboard(role) {
   if (role === "ADMIN DISPORA") {
     buildAdminTab(tabsUl, contentDiv, "t1", "Informasi & Akses Gerbang", renderSubBukaTutup(), true);
     buildAdminTab(tabsUl, contentDiv, "t2", "Daftar Peserta Kegiatan", renderSubPesertaKegiatan());
-    buildAdminTab(tabsUl, contentDiv, "t8", "Kelola Berita Portal", renderSubKelolaBerita()); // Tambahan Berita Modul
+    buildAdminTab(tabsUl, contentDiv, "t8", "Kelola Berita Portal", renderSubKelolaBerita()); 
     buildAdminTab(tabsUl, contentDiv, "t3", "Edit Data OKP", renderSubKelolaOKP());
     buildAdminTab(tabsUl, contentDiv, "t4", "Edit Data Pemuda", renderSubKelolaPemuda());
     buildAdminTab(tabsUl, contentDiv, "t5", "Kelola Panduan & Juknis", renderSubKelolaDokumen());
@@ -768,7 +752,6 @@ function buildAdminTab(ul, content, id, title, htmlContent, isActive) {
   content.innerHTML += "<div class='tab-pane fade " + showActivePanel + "' id='" + id + "-panel'><div class='bg-dark-sec p-3 rounded border border-secondary mt-3'>" + htmlContent + "</div></div>";
 }
 
-// PENYESUAIAN POIN II.5: Transformasi Fungsi Manajemen Buka-Tutup Akses Kegiatan Sinkronisasi Dua Arah Sheets
 function renderSubBukaTutup() { 
   var rowsHtml = DB_KEGIATAN.map(function(k) {
     var badgeClass = (k.status === "BUKA") ? "bg-success" : "bg-secondary";
@@ -834,7 +817,6 @@ function saveAdminKegiatan(e) {
   .finally(function() { hideLoading(); });
 }
 
-// PENYESUAIAN POIN II.3: Modul Form Manajemen Pengelolaan Rilis Berita Publikasi (Dua Arah Server)
 function renderSubKelolaBerita() {
   var rowsHtml = DB_BERITA.map(function(b) {
     return "<tr>" +
@@ -1080,11 +1062,6 @@ function populateDocEf(rIdx, no, nama, link, grad, kategori) {
   document.getElementById("adm_doc_link").value = link; 
   document.getElementById("adm_doc_grad").value = grad;
   document.getElementById("btn-save-doc").innerText = "Perbarui Berkas Terbit (Update)";
-}
-
-function updateAdminDashboardRoleView() {
-  var currentRole = document.getElementById("login_selected_role").value;
-  if (currentRole) { openAdminDashboard(currentRole); }
 }
 
 function saveAdminDokumen(e) { 
