@@ -41,7 +41,6 @@
                     <i class="bi bi-house-door-fill text-primary me-2"></i> HOME
                 </a>
             </li>
-            <!-- PENYESUAIAN: Modul Navigasi Berita Baru -->
             <li class="nav-item mb-1">
                 <a class="nav-link text-white" id="nav-berita" href="#" onclick="showSection('berita')">
                     <i class="bi bi-newspaper text-cyan me-2"></i> BERITA & INFO
@@ -134,10 +133,12 @@
                     </div>
                 </div>
 
-                <!-- Rangkuman Statistik Data Utama -->
+                <!-- Rangkuman Statistik Data Utama (Grid Berdampingan Premium) -->
                 <h4 class="fw-bold text-white mb-3"><i class="bi bi-bar-chart-line-fill me-2 text-cyan"></i>Rangkuman Statistik Data Utama</h4>
                 <div class="row g-4 mb-5">
-                    <div class="col-12">
+                    
+                    <!-- Grafik OKP (Kiri - Setengah Layar) -->
+                    <div class="col-lg-6">
                         <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
                             <h6 class="fw-bold text-warning mb-3"><i class="bi bi-shield-shaded me-1"></i>Analisis Kelayakan Status Organisasi Pemuda (OKP) Daerah</h6>
                             <div class="chart-container-canvas">
@@ -145,6 +146,18 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Grafik Survei (Kanan - Setengah Layar) -->
+                    <div class="col-lg-6">
+                        <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
+                            <h6 class="fw-bold text-purple mb-3"><i class="bi bi-emoji-smile-fill me-1"></i>Metrik Indeks Kepuasan Layanan Sistem Terpadu SI-DUDA</h6>
+                            <div class="chart-container-canvas">
+                                <canvas id="chartHomeSurvei"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grafik Populasi Pemuda (Bawah - Kolom Penuh karena Datanya Padat) -->
                     <div class="col-12">
                         <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
                             <h6 class="fw-bold text-info mb-3"><i class="bi bi-people-fill me-1"></i>Agregat Distribusi Populasi Pemuda Berbasis Wilayah Kecamatan</h6>
@@ -153,14 +166,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
-                            <h6 class="fw-bold text-purple mb-3"><i class="bi bi-emoji-smile-fill me-1"></i>Metrik Indeks Kepuasan Layanan Sistem Terpadu SI-DUDA</h6>
-                            <div class="chart-container-canvas">
-                                <canvas id="chartHomeSurvei"></canvas>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+
+                <!-- Wadah Dinamis Teaser Berita Terbaru di Beranda -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold text-white mb-0"><i class="bi bi-newspaper me-2 text-cyan"></i>Berita & Informasi Terbaru</h4>
+                    <button class="btn btn-sm btn-outline-cyan fw-bold px-3" onclick="showSection('berita')">Lihat Semua Berita <i class="bi bi-arrow-right ms-1"></i></button>
+                </div>
+                <div class="row g-4 mb-5" id="container-berita-teaser">
+                    <!-- Otomatis dimuat oleh JavaScript -->
                 </div>
 
                 <!-- Footer Informasi Dinas Resmi -->
@@ -320,7 +334,6 @@
             <div id="section-kegiatan" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-3"><i class="bi bi-calendar-event-fill me-2 text-danger"></i>Informasi & Pendaftaran Kegiatan Kepemudaan</h4>
                 
-                <!-- PENYESUAIAN: Mentransformasikan kartu kaku menjadi wadah kartu dinamis teratur database -->
                 <div class="row g-3 mb-4" id="container-kegiatan-cards">
                     <!-- Generator JavaScript otomatis memasang deretan kartu pendaftaran kompetensi aktif -->
                 </div>
