@@ -15,7 +15,11 @@
         <div class="container-fluid">
             <span class="navbar-brand fw-bold text-white d-flex align-items-center">
                 <img src="LOGO APLIKASI.png" alt="Logo" class="brand-logo me-2" id="logoToggleBtn" onclick="toggleSidebar()" style="cursor:pointer;" onerror="this.src='https://placehold.co/40x40/06b6d4/ffffff?text=SD'"> 
-                <span onclick="showSection('home')" style="cursor:pointer;">SI-DUDA (SISTEM INFORMASI TERPADU PEMUDA)</span>
+                <span onclick="showSection('home')" style="cursor:pointer;">
+                    <!-- Responsif Navbar Title: Teks pendek untuk HP, teks lengkap untuk laptop -->
+                    <span class="d-inline d-sm-none">SI-DUDA BOLTARA</span>
+                    <span class="d-none d-sm-inline">SI-DUDA (SISTEM INFORMASI TERPADU PEMUDA)</span>
+                </span>
             </span>
             <div class="ms-auto">
                 <span class="text-white-50 small d-none d-md-inline fw-semibold">
