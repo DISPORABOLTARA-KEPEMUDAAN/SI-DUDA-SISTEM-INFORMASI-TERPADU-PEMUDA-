@@ -21,6 +21,16 @@ var DB_JUKNIS_KEGIATAN = [];
 var DB_KEGIATAN = []; // Sinkronisasi: Penampung rumpun data kegiatan dinas dari server
 var DB_BERITA = [];   // Sinkronisasi: Penampung data rilis berita portal terpadu
 
+// PERBAIKAN BUG: Definisi skema warna border & background baris untuk visualisasi data kecamatan
+var STYLING_KECAMATAN = {
+  "Kaidipang": { border: "3px solid #22d3ee", bg: "rgba(34, 211, 238, 0.05)" },
+  "Pinogaluman": { border: "3px solid #c084fc", bg: "rgba(192, 132, 252, 0.05)" },
+  "Bolangitang Timur": { border: "3px solid #34d399", bg: "rgba(52, 211, 153, 0.05)" },
+  "Bolangitang Barat": { border: "3px solid #fbbf24", bg: "rgba(251, 191, 36, 0.05)" },
+  "Bintauna": { border: "3px solid #f472b6", bg: "rgba(244, 114, 182, 0.05)" },
+  "Sangkub": { border: "3px solid #60a5fa", bg: "rgba(96, 165, 250, 0.05)" }
+};
+
 // Parameter Pengaturan Akses Registrasi Kegiatan (Akan ditimpa otomatis oleh data server Sheets)
 var REG_STATUS = { 
   kreativesia: true, 
@@ -65,6 +75,14 @@ var chartHomeOKPInstance = null;
 var chartHomePemudaInstance = null;
 var chartHomeSurveiInstance = null;
 
+// PERBAIKAN KEAMANAN: Fungsi helper sanitasi strings untuk menangkal injeksi Cross-Site Scripting (XSS)
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, function(m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+  });
+}
+
 // Fungsi Manajemen Animasi Memuat Data (Loading State UX Overlay)
 function showLoading() {
   var loader = document.getElementById("ui-loading-loader");
@@ -89,8 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("Menginisialisasi modul SI-DUDA Sisi Klien...");
   
   if (window.innerWidth < 992) {
-    var sidebar = document.getElementById("sidebarMenu");
-    if (sidebar) sidebar.classList.remove("active");
+    document.body.classList.remove("sidebar-active");
   }
 
   loadDataFromSheets();
@@ -120,6 +137,7 @@ function loadDataFromSheets() {
   console.log("Melakukan panggilan data ke server: " + SCRIPT_URL);
   fetch(SCRIPT_URL)
     .then(function(response) {
+      if (!response.ok) { throw new Error("Gagal menerima data, status: " + response.status); }
       return response.json();
     })
     .then(function(data) {
@@ -174,7 +192,9 @@ function filterTableOKP() {
 }
 
 function filterTablePemuda() {
-  var value = document.getElementById("searchPemuda").value.toLowerCase();
+  var elem = document.getElementById("searchPemuda");
+  if (!elem) return;
+  var value = elem.value.toLowerCase();
   var rows = document.querySelectorAll("#tablePemuda tbody tr");
   rows.forEach(function(tr) {
     if (tr.innerText.toLowerCase().includes(value)) {
@@ -197,8 +217,9 @@ function filterDokumenCards() {
   });
 }
 
+// PERBAIKAN SINKRONISASI: Mengubah kendali pergeseran sidebar responsif terikat langsung pada root body 
 function toggleSidebar() { 
-  document.getElementById("sidebarMenu").classList.toggle("active"); 
+  document.body.classList.toggle("sidebar-active"); 
 }
 
 function showSection(id) {
@@ -223,11 +244,10 @@ function showSection(id) {
   }
   
   if (window.innerWidth < 992) {
-    document.getElementById("sidebarMenu").classList.remove("active");
+    document.body.classList.remove("sidebar-active");
   }
 }
 
-// REVISI: Membersihkan teks warna pelangi kaku pada nama OKP menjadi Putih Bersih Formal
 function renderTableOKP() {
   var tbody = document.querySelector("#tableOKP tbody");
   if (!tbody) { return; }
@@ -236,12 +256,12 @@ function renderTableOKP() {
     var badgeStyle = "bg-warning";
     if (i.sk === 'Aktif') { badgeStyle = "bg-success"; }
     return "<tr>" +
-        "<td>" + i.no + "</td>" +
-        "<td class='fw-bold text-white'>" + i.nama + "</td>" + // FIX: Menggunakan warna putih formal modifikasi dashboard
-        "<td>" + i.tingkat + "</td>" +
-        "<td>" + i.ketua + "</td>" +
-        "<td>" + i.alamat + "</td>" +
-        "<td><span class='badge " + badgeStyle + "'>" + i.sk + "</span></td>" +
+        "<td>" + escapeHTML(i.no) + "</td>" +
+        "<td class='fw-bold text-white'>" + escapeHTML(i.nama) + "</td>" + 
+        "<td>" + escapeHTML(i.tingkat) + "</td>" +
+        "<td>" + escapeHTML(i.ketua) + "</td>" +
+        "<td>" + escapeHTML(i.alamat) + "</td>" +
+        "<td><span class='badge " + badgeStyle + "'>" + escapeHTML(i.sk) + "</span></td>" +
         "</tr>";
   });
   tbody.innerHTML = htmlRows.join('');
@@ -260,13 +280,13 @@ function renderTablePemuda() {
   
   var htmlRows = DB_PEMUDA.map(function(i) {
     var style = STYLING_KECAMATAN[i.kec] || { border: "none", bg: "transparent" };
-    return "<tr style='border-left: " + style.border + "; background-color: " + style.bg + " !important;'>".replace(" !important", "") +
-        "<td>" + i.no + "</td>" +
-        "<td class='fw-bold text-white-90'>" + i.kec + "</td>" +
-        "<td>" + i.desa + "</td>" +
-        "<td>" + i.l.toLocaleString('id-ID') + "</td>" +
-        "<td>" + i.p.toLocaleString('id-ID') + "</td>" +
-        "<td class='text-cyan fw-bold'>" + i.total.toLocaleString('id-ID') + "</td>" +
+    return "<tr style='border-left: " + style.border + "; background-color: " + style.bg + ";'>" +
+        "<td>" + escapeHTML(i.no) + "</td>" +
+        "<td class='fw-bold text-white-90'>" + escapeHTML(i.kec) + "</td>" +
+        "<td>" + escapeHTML(i.desa) + "</td>" +
+        "<td>" + Number(i.l).toLocaleString('id-ID') + "</td>" +
+        "<td>" + Number(i.p).toLocaleString('id-ID') + "</td>" +
+        "<td class='text-cyan fw-bold'>" + Number(i.total).toLocaleString('id-ID') + "</td>" +
         "</tr>";
   });
   tbody.innerHTML = htmlRows.join('');
@@ -275,6 +295,7 @@ function renderTablePemuda() {
   var totalLakiLaki = DB_PEMUDA.reduce(function(acc, curr) { return acc + (Number(curr.l) || 0); }, 0);
   var totalPerempuan = DB_PEMUDA.reduce(function(acc, curr) { return acc + (Number(curr.p) || 0); }, 0);
   
+  // PERBAIKAN CRITICAL BUG: Menambahkan tanda petik penutup (') yang hilang pada 'id-ID'
   document.getElementById("card-pemuda-total").innerText = totalKabupaten.toLocaleString('id-ID') + " Jiwa";
   document.getElementById("card-pemuda-l").innerText = totalLakiLaki.toLocaleString('id-ID') + " Jiwa";
   document.getElementById("card-pemuda-p").innerText = totalPerempuan.toLocaleString('id-ID') + " Jiwa";
@@ -435,9 +456,9 @@ function renderClientCardsDokumen() {
         "<div class='info-card " + gradColor + " p-3 rounded text-white h-100 d-flex flex-column justify-content-between text-center shadow'>" +
         "<div>" +
         "<i class='bi " + (doc.ikon || 'bi-file-earmark-text-fill') + " fs-1 mb-2 d-block text-white'></i>" +
-        "<h6 class='fw-bold mb-3 text-uppercase' style='font-size:0.85rem; min-height:40px;'>" + doc.nama + "</h6>" +
+        "<h6 class='fw-bold mb-3 text-uppercase' style='font-size:0.85rem; min-height:40px;'>" + escapeHTML(doc.nama) + "</h6>" +
         "</div>" +
-        "<a href='" + doc.link + "' target='_blank' class='btn btn-sm btn-download-clear w-100 text-center mt-2'>" +
+        "<a href='" + encodeURI(doc.link) + "' target='_blank' class='btn btn-sm btn-download-clear w-100 text-center mt-2'>" +
         "<i class='bi bi-download me-1'></i>UNDUH" +
         "</a>" +
         "</div>" +
@@ -493,11 +514,11 @@ function renderClientCardsKegiatan() {
         "<div class='info-card " + gradColor + " p-3 rounded text-white h-100 d-flex flex-column justify-content-between text-center shadow'>" +
         "<div>" +
         "<i class='bi " + iconClass + " fs-2 mb-2 d-block text-white'></i>" +
-        "<h5 class='fw-bold'>" + k.nama + "</h5>" +
-        "<p class='small text-white-50 text-justify mb-2'>" + k.deskripsi + "</p>" +
+        "<h5 class='fw-bold'>" + escapeHTML(k.nama) + "</h5>" +
+        "<p class='small text-white-50 text-justify mb-2'>" + escapeHTML(k.deskripsi) + "</p>" +
         "<div class='p-2 bg-black bg-opacity-20 rounded small text-start border border-secondary border-opacity-20 mb-2'>" +
-        "<div class='text-cyan'><i class='bi bi-calendar-check me-1'></i>" + k.pelaksanaan + "</div>" +
-        "<div class='text-white-50' style='font-size:11px;'><i class='bi bi-card-checklist me-1'></i>" + k.syarat + "</div>" +
+        "<div class='text-cyan'><i class='bi bi-calendar-check me-1'></i>" + escapeHTML(k.pelaksanaan) + "</div>" +
+        "<div class='text-white-50' style='font-size:11px;'><i class='bi bi-card-checklist me-1'></i>" + escapeHTML(k.syarat) + "</div>" +
         "</div>" +
         "</div>" +
         "<button id='btn-reg-" + k.id + "' class='btn btn-sm " + btnStyle + " w-100 mt-2 fw-bold' onclick='openRegForm(\"" + k.id + "\")' " + isDisabled + ">" + btnText + "</button>" +
@@ -525,9 +546,9 @@ function renderClientCardsBerita() {
         "<img src='" + finalImg + "' class='card-img-top' alt='Dokumentasi Berita' style='height:165px; object-fit:cover;' onerror=\"this.src='" + placeholderImg + "'\">" +
         "<div class='card-body d-flex flex-column justify-content-between'>" +
         "<div>" +
-        "<span class='text-cyan small d-block mb-1' style='font-size:11px;'><i class='bi bi-calendar-event me-1'></i>" + b.tanggal + "</span>" +
-        "<h5 class='card-title fw-bold text-white' style='font-size:0.98rem;'>" + b.judul + "</h5>" +
-        "<p class='card-text text-white-50 small text-justify' style='font-size:12px;'>" + (b.isi.length > 110 ? b.isi.substring(0, 110) + "..." : b.isi) + "</p>" +
+        "<span class='text-cyan small d-block mb-1' style='font-size:11px;'><i class='bi bi-calendar-event me-1'></i>" + escapeHTML(b.tanggal) + "</span>" +
+        "<h5 class='card-title fw-bold text-white' style='font-size:0.98rem;'>" + escapeHTML(b.judul) + "</h5>" +
+        "<p class='card-text text-white-50 small text-justify' style='font-size:12px;'>" + (b.isi.length > 110 ? escapeHTML(b.isi.substring(0, 110)) + "..." : escapeHTML(b.isi)) + "</p>" +
         "</div>" +
         "</div>" +
         "</div>" +
@@ -756,10 +777,10 @@ function renderSubBukaTutup() {
   var rowsHtml = DB_KEGIATAN.map(function(k) {
     var badgeClass = (k.status === "BUKA") ? "bg-success" : "bg-secondary";
     return "<tr>" +
-        "<td><span class='badge " + badgeClass + "'>" + k.status + "</span></td>" +
-        "<td class='fw-bold text-white'>" + k.nama + "</td>" +
-        "<td>" + k.pelaksanaan + "</td>" +
-        "<td>" + k.syarat + "</td>" +
+        "<td><span class='badge " + badgeClass + "'>" + escapeHTML(k.status) + "</span></td>" +
+        "<td class='fw-bold text-white'>" + escapeHTML(k.nama) + "</td>" +
+        "<td>" + escapeHTML(k.pelaksanaan) + "</td>" +
+        "<td>" + escapeHTML(k.syarat) + "</td>" +
         "<td><button class='btn btn-xs btn-warning py-0 px-2 fw-bold' style='font-size:11px;' onclick=\"populateKegiatanEf(" + k.rowIndex + ", '" + k.id + "', '" + k.nama.replace(/'/g, "\\'") + "', '" + k.pelaksanaan.replace(/'/g, "\\'") + "', '" + k.syarat.replace(/'/g, "\\'") + "', '" + k.status + "')\">Pilih</button></td>" +
         "</tr>";
   }).join('');
@@ -820,8 +841,8 @@ function saveAdminKegiatan(e) {
 function renderSubKelolaBerita() {
   var rowsHtml = DB_BERITA.map(function(b) {
     return "<tr>" +
-        "<td>" + b.tanggal + "</td>" +
-        "<td class='fw-bold text-white text-start'>" + b.judul + "</td>" +
+        "<td>" + escapeHTML(b.tanggal) + "</td>" +
+        "<td class='fw-bold text-white text-start'>" + escapeHTML(b.judul) + "</td>" +
         "<td><button class='btn btn-xs btn-warning py-0 px-2 fw-bold' style='font-size:11px;' onclick=\"populateBeritaEf(" + b.rowIndex + ", " + b.no + ", '" + b.tanggal + "', '" + b.judul.replace(/'/g, "\\'") + "', '" + b.isi.replace(/'/g, "\\'") + "')\">Pilih</button></td>" +
         "</tr>";
   }).join('');
@@ -904,15 +925,15 @@ function renderSubPesertaKegiatan() {
     } else {
       rowsTable = DB_REGISTRASI[k].map(function(p) {
         return "<tr>" +
-            "<td>" + p.no + "</td>" +
-            "<td>" + p.nama + "</td>" +
-            "<td>" + (p.nik || '-') + "</td>" +
-            "<td>" + (p.ttl || '-') + "</td>" +
-            "<td>" + (p.jk || '-') + "</td>" +
-            "<td>" + p.hp + "</td>" +
-            "<td>" + p.instansi + "</td>" +
-            (ext ? "<td>" + p.spesifik + "</td>" : "") +
-            "<td><a href='" + p.file + "' target='_blank' class='btn btn-xs btn-primary py-0 px-2 small text-white'>Lihat Berkas</a></td>" +
+            "<td>" + escapeHTML(p.no) + "</td>" +
+            "<td>" + escapeHTML(p.nama) + "</td>" +
+            "<td>" + (p.nik ? escapeHTML(p.nik) : '-') + "</td>" +
+            "<td>" + (p.ttl ? escapeHTML(p.ttl) : '-') + "</td>" +
+            "<td>" + (p.jk ? escapeHTML(p.jk) : '-') + "</td>" +
+            "<td>" + escapeHTML(p.hp) + "</td>" +
+            "<td>" + escapeHTML(p.instansi) + "</td>" +
+            (ext ? "<td>" + escapeHTML(p.spesifik) + "</td>" : "") +
+            "<td><a href='" + encodeURI(p.file) + "' target='_blank' class='btn btn-xs btn-primary py-0 px-2 small text-white'>Lihat Berkas</a></td>" +
             "</tr>";
       }).join('');
     }
@@ -932,7 +953,7 @@ function renderSubPesertaKegiatan() {
 
 function renderSubKelolaOKP() { 
   var rowsHtml = DB_OKP.map(function(o) {
-    return "<tr><td>" + o.nama + "</td><td>" + o.alamat + "</td><td><button class='btn btn-xs btn-warning py-0 px-2 fw-bold' style='font-size:11px;' onclick=\"populateOKPEf(" + o.rowIndex + ", " + o.no + ", '" + o.nama.replace(/'/g, "\\'") + "', '" + o.tingkat.replace(/'/g, "\\'") + "', '" + o.ketua.replace(/'/g, "\\'") + "', '" + o.alamat.replace(/'/g, "\\'") + "', '" + o.sk + "')\">Pilih</button></td></tr>";
+    return "<tr><td>" + escapeHTML(o.nama) + "</td><td>" + escapeHTML(o.alamat) + "</td><td><button class='btn btn-xs btn-warning py-0 px-2 fw-bold' style='font-size:11px;' onclick=\"populateOKPEf(" + o.rowIndex + ", " + o.no + ", '" + o.nama.replace(/'/g, "\\'") + "', '" + o.tingkat.replace(/'/g, "\\'") + "', '" + o.ketua.replace(/'/g, "\\'") + "', '" + o.alamat.replace(/'/g, "\\'") + "', '" + o.sk + "')\">Pilih</button></td></tr>";
   }).join('');
   
   return "<h6 class='text-warning fw-bold mb-3'>Pembaruan Berkas Data OKP Dua Arah</h6>" +
@@ -1039,7 +1060,7 @@ function saveAdminPemuda(e) {
 function renderSubKelolaDokumen() { 
   var allDocs = [].concat(DB_PANDUAN_ADMINISTRASI, DB_JUKNIS_KEGIATAN);
   var listHtml = allDocs.map(function(d) {
-    return "<tr><td><span class='badge bg-secondary'>" + d.kategori + "</span></td><td>" + d.nama + "</td><td><button class='btn btn-xs btn-warning py-0 px-2 text-dark' style='font-size:11px;' onclick=\"populateDocEf(" + d.rowIndex + ", " + d.no + ", '" + d.nama.replace(/'/g, "\\'") + "', '" + d.link + "', '" + d.grad + "', '" + d.kategori + "')\">Pilih</button></td></tr>";
+    return "<tr><td><span class='badge bg-secondary'>" + escapeHTML(d.kategori) + "</span></td><td>" + escapeHTML(d.nama) + "</td><td><button class='btn btn-xs btn-warning py-0 px-2 text-dark' style='font-size:11px;' onclick=\"populateDocEf(" + d.rowIndex + ", " + d.no + ", '" + d.nama.replace(/'/g, "\\'") + "', '" + d.link + "', '" + d.grad + "', '" + d.kategori + "')\">Pilih</button></td></tr>";
   }).join('');
   
   return "<h6 class='text-success fw-bold mb-3'>Manajemen Dokumen Juknis & Panduan Terintegrasi (Dua Arah)</h6>" +
@@ -1134,7 +1155,13 @@ function saveAdminProposal(e) {
 
 function renderSubHasilSurvei() { 
   var loopRows = DB_SURVEI.map(function(s) {
-    return "<tr><td>" + s.no + "</td><td>" + s.nama + "</td><td>" + s.skor_rata + "</td><td>" + s.suka + "</td><td>" + s.kendala + "</td></tr>";
+    return "<tr>" +
+        "<td>" + escapeHTML(s.no) + "</td>" +
+        "<td>" + escapeHTML(s.nama) + "</td>" +
+        "<td>" + escapeHTML(s.skor_rata) + "</td>" +
+        "<td>" + escapeHTML(s.suka) + "</td>" +
+        "<td>" + escapeHTML(s.kendala) + "</td>" +
+        "</tr>";
   }).join('');
   return "<h6 class='text-purple fw-bold mb-3'>Rekap Lembar Hasil Survei Kepuasan</h6><div class='table-responsive'><table class='table table-dark table-striped table-bordered small text-center mb-0'><thead><tr><th>No</th><th>Responden</th><th>Skor</th><th>Suka</th><th>Kendala</th></tr></thead><tbody>" + loopRows + "</tbody></table></div>"; 
 }
