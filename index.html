@@ -9,15 +9,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="sidebar-active">
 
-    <!-- TOP NAVBAR -->
     <nav class="navbar navbar-expand-lg top-navbar px-3 fixed-top">
         <div class="container-fluid">
             <span class="navbar-brand fw-bold text-white d-flex align-items-center">
                 <img src="LOGO APLIKASI.png" alt="Logo" class="brand-logo me-2" id="logoToggleBtn" onclick="toggleSidebar()" style="cursor:pointer;" onerror="this.src='https://placehold.co/40x40/06b6d4/ffffff?text=SD'"> 
                 <span onclick="showSection('home')" style="cursor:pointer;">
-                    <!-- Responsif Navbar Title: Teks pendek untuk HP, teks lengkap untuk laptop -->
                     <span class="d-inline d-sm-none">SI-DUDA BOLTARA</span>
                     <span class="d-none d-sm-inline">SI-DUDA (SISTEM INFORMASI TERPADU PEMUDA)</span>
                 </span>
@@ -30,7 +28,6 @@
         </div>
     </nav>
 
-    <!-- SIDEBAR NAVIGATION -->
     <div class="sidebar active" id="sidebarMenu">
         <div class="sidebar-header p-3 border-bottom border-secondary text-center">
             <h6 class="text-cyan fw-bold mb-0">MENU UTAMA SYSTEM</h6>
@@ -79,14 +76,11 @@
         </ul>
     </div>
 
-    <!-- MAIN CONTENT BODY Wrapper -->
     <div class="main-content" id="mainContentBody">
         <div class="container-fluid p-4">
 
-            <!-- ================= HOME SECTION ================= -->
             <div id="section-home" class="content-section">
                 
-                <!-- Banner Selamat Datang Simetris -->
                 <div class="p-4 rounded shadow mb-4 bg-dark-sec">
                     <div class="row align-items-center g-3">
                         <div class="col-md-2 text-center text-md-start">
@@ -100,7 +94,6 @@
                     </div>
                 </div>
                 
-                <!-- Kegunaan Website & Tupoksi Kerja -->
                 <h4 class="fw-bold text-white mb-3"><i class="bi bi-info-circle-fill me-2 text-cyan"></i>Kegunaan Website & Tupoksi Kerja</h4>
                 <div class="row g-3 mb-5">
                     <div class="col-md-6 col-lg-3">
@@ -133,11 +126,8 @@
                     </div>
                 </div>
 
-                <!-- Rangkuman Statistik Data Utama (Grid Berdampingan Premium) -->
                 <h4 class="fw-bold text-white mb-3"><i class="bi bi-bar-chart-line-fill me-2 text-cyan"></i>Rangkuman Statistik Data Utama</h4>
                 <div class="row g-4 mb-5">
-                    
-                    <!-- Grafik OKP (Kiri - Setengah Layar) -->
                     <div class="col-lg-6">
                         <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
                             <h6 class="fw-bold text-warning mb-3"><i class="bi bi-shield-shaded me-1"></i>Analisis Kelayakan Status Organisasi Pemuda (OKP) Daerah</h6>
@@ -146,8 +136,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Grafik Survei (Kanan - Setengah Layar) -->
                     <div class="col-lg-6">
                         <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
                             <h6 class="fw-bold text-purple mb-3"><i class="bi bi-emoji-smile-fill me-1"></i>Metrik Indeks Kepuasan Layanan Sistem Terpadu SI-DUDA</h6>
@@ -156,8 +144,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Grafik Populasi Pemuda (Bawah - Kolom Penuh karena Datanya Padat) -->
                     <div class="col-12">
                         <div class="bg-dark-sec p-4 rounded border border-secondary shadow-lg dashboard-chart-box">
                             <h6 class="fw-bold text-info mb-3"><i class="bi bi-people-fill me-1"></i>Agregat Distribusi Populasi Pemuda Berbasis Wilayah Kecamatan</h6>
@@ -168,16 +154,12 @@
                     </div>
                 </div>
 
-                <!-- Wadah Dinamis Teaser Berita Terbaru di Beranda -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="fw-bold text-white mb-0"><i class="bi bi-newspaper me-2 text-cyan"></i>Berita & Informasi Terbaru</h4>
                     <button class="btn btn-sm btn-outline-cyan fw-bold px-3" onclick="showSection('berita')">Lihat Semua Berita <i class="bi bi-arrow-right ms-1"></i></button>
                 </div>
-                <div class="row g-4 mb-5" id="container-berita-teaser">
-                    <!-- Otomatis dimuat oleh JavaScript -->
-                </div>
+                <div class="row g-4 mb-5" id="container-berita-teaser"></div>
 
-                <!-- Footer Informasi Dinas Resmi -->
                 <hr class="border-secondary mt-5">
                 <footer class="mt-4 p-4 rounded bg-dark-sec border border-secondary text-white">
                     <div class="row g-4">
@@ -207,16 +189,12 @@
                 </footer>
             </div>
 
-            <!-- ================= PENYESUAIAN: BERITA SECTION ================= -->
             <div id="section-berita" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-2"><i class="bi bi-newspaper me-2 text-cyan"></i>BERITA & PENGUMUMAN TERKINI</h4>
                 <p class="text-white-50 mb-4">Rilis berita resmi dan dokumentasi rangkaian aktivitas kepemudaan daerah.</p>
-                <div class="row g-4" id="container-berita-cards">
-                    <!-- Dinonaktifkan di HTML, otomatis di-generate oleh JS ke kolom ini -->
-                </div>
+                <div class="row g-4" id="container-berita-cards"></div>
             </div>
 
-            <!-- ================= OKP SECTION ================= -->
             <div id="section-okp" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-3"><i class="bi bi-shield-shaded me-2 text-warning"></i>DATA ORGANISASI KEPEMUDAAN (OKP) BOLTARA</h4>
                 <div class="row g-3 mb-3">
@@ -246,7 +224,7 @@
                 <div class="mb-3">
                     <div class="input-group">
                         <span class="input-group-text bg-dark-sec border-secondary text-white"><i class="bi bi-search"></i></span>
-                        <input type="text" id="searchOKP" class="form-control bg-dark text-white border-secondary" placeholder="Cari Nama Organisasi, Ketua, atau Wilayah Basis secara Akurat...">
+                        <input type="text" id="searchOKP" class="form-control bg-dark text-white border-secondary" placeholder="Cari Nama Organisasi, Ketua, atau Wilayah Basis...">
                     </div>
                 </div>
 
@@ -269,7 +247,6 @@
                 </div>
             </div>
 
-            <!-- ================= PEMUDA SECTION ================= -->
             <div id="section-pemuda" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-3"><i class="bi bi-people-fill me-2 text-info"></i>DATA PEMUDA BOLTARA</h4>
                 
@@ -330,13 +307,10 @@
                 </div>
             </div>
 
-            <!-- ================= KEGIATAN SECTION ================= -->
             <div id="section-kegiatan" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-3"><i class="bi bi-calendar-event-fill me-2 text-danger"></i>Informasi & Pendaftaran Kegiatan Kepemudaan</h4>
                 
-                <div class="row g-3 mb-4" id="container-kegiatan-cards">
-                    <!-- Generator JavaScript otomatis memasang deretan kartu pendaftaran kompetensi aktif -->
-                </div>
+                <div class="row g-3 mb-4" id="container-kegiatan-cards"></div>
                 
                 <div id="formPlaceholderNotice" class="bg-dark-sec p-5 rounded shadow text-center border border-secondary mt-3 animate-fade">
                     <i class="bi bi-cursor-fill text-cyan fs-1 mb-3 d-block"></i>
@@ -360,7 +334,6 @@
                 </div>
             </div>
 
-            <!-- ================= PANDUAN SECTION ================= -->
             <div id="section-panduan" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-2"><i class="bi bi-file-earmark-arrow-down-fill me-2 text-success"></i>Dokumen Panduan Administrasi & Juknis Kegiatan</h4>
                 <p class="text-white-50 mb-3">Silakan akses berkas kelengkapan resmi dari Bidang Kepemudaan melalui tombol unduh di bawah ini.</p>
@@ -368,7 +341,7 @@
                 <div class="mb-4">
                     <div class="input-group">
                         <span class="input-group-text bg-dark-sec border-secondary text-white"><i class="bi bi-search"></i></span>
-                        <input type="text" id="searchDokumen" class="form-control bg-dark text-white border-secondary" placeholder="Ketik nama file panduan administrasi atau berkas juknis untuk mencari...">
+                        <input type="text" id="searchDokumen" class="form-control bg-dark text-white border-secondary" placeholder="Ketik nama file panduan administrasi atau berkas juknis...">
                     </div>
                 </div>
 
@@ -379,7 +352,6 @@
                 <div class="row g-3" id="container-juknis-cards"></div>
             </div>
 
-            <!-- ================= SURVEI SECTION ================= -->
             <div id="section-survei" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-2"><i class="bi bi-clipboard-check-fill me-2 text-purple"></i>Survei Kepuasan Layanan Website</h4>
                 <p class="text-white-50 mb-4">Evaluasi kuantitatif kepuasan publik berdasarkan instrumen resmi kuesioner.</p>
@@ -429,7 +401,6 @@
                 </div>
             </div>
 
-            <!-- ================= LOGIN SECTION ================= -->
             <div id="section-login" class="content-section d-none">
                 <h4 class="fw-bold text-white mb-4 text-center"><i class="bi bi-shield-lock-fill me-2 text-pink"></i>Pintu Masuk Dashboard Pengelola</h4>
                 <div class="row g-3 justify-content-center">
@@ -457,7 +428,6 @@
                 </div>
             </div>
 
-            <!-- ================= ADMIN DASHBOARD SECTION ================= -->
             <div id="section-admin-dashboard" class="content-section d-none">
                 <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-4">
                     <h4 class="fw-bold text-white mb-0" id="adminDashboardTitle">Dashboard Admin Control</h4>
@@ -470,7 +440,6 @@
         </div>
     </div>
 
-    <!-- Modal Login Gate System -->
     <div class="modal fade" id="loginGateModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content bg-dark-sec border-secondary">
