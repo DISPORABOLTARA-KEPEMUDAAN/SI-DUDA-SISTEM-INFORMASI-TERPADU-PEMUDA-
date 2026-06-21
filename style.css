@@ -62,7 +62,7 @@ body {
     overflow-y: auto;
 }
 
-.sidebar.active { 
+body.sidebar-active .sidebar { 
     left: 0; 
 }
 
@@ -85,18 +85,30 @@ body {
    ========================================================================== */
 .main-content { 
     margin-left: 0; 
+    width: 100%;
     transition: all 0.3s ease; 
     min-height: calc(100vh - var(--navbar-height)); 
+    box-sizing: border-box;
 }
 
-.sidebar.active ~ .main-content { 
+body.sidebar-active .main-content { 
     margin-left: var(--sidebar-width); 
+    width: calc(100% - var(--sidebar-width)) !important; 
 }
 
 @media (max-width: 991.98px) { 
-    .sidebar.active ~ .main-content { 
-        margin-left: 0; 
+    .main-content {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    body.sidebar-active .main-content { 
+        margin-left: 0 !important; 
+        width: 100% !important;
     } 
+    body.sidebar-active .sidebar {
+        left: 0 !important;
+        width: var(--sidebar-width) !important;
+    }
 }
 
 .bg-dark-sec { 
@@ -138,7 +150,6 @@ body {
     width: 100%; 
 }
 
-/* Refinement Kartu Informasi Beranda */
 .info-card { 
     background: #1e293b !important; 
     border: 1px solid rgba(6, 182, 212, 0.15) !important; 
@@ -178,29 +189,28 @@ body {
 }
 
 /* ==========================================================================
-   REVISI FIX TABEL: ADAPTIF PENUH (ANTI-GESER & AUTO BERSUSUN KE BAWAH DI HP)
+   REVISI FIX TABEL: ADAPTIF PENUH
    ========================================================================== */
 .table-responsive {
     border-radius: 8px;
-    overflow-x: hidden !important; /* Mengunci total agar layar HP tidak bisa goyang/geser kanan-kiri */
+    overflow-x: auto !important; 
     overflow-y: hidden;          
     width: 100% !important;
 }
 
 .table {
-    table-layout: auto !important; /* Membiarkan browser membagi lebar kolom secara fleksibel */
+    table-layout: auto !important; 
     width: 100% !important;
     border-collapse: separate !important;
     border-spacing: 0 4px !important; 
     margin-top: 4px;
 }
 
-/* Formula Utama: Mengaktifkan teks bersusun ke bawah secara rapi */
 .table th, .table td {
-    white-space: normal !important;   /* Mengizinkan teks patah/turun ke bawah jika layar sempit */
-    word-wrap: break-word !important;  /* Memotong kata yang terlalu panjang dengan aman */
+    white-space: normal !important;   
+    word-wrap: break-word !important;  
     overflow-wrap: break-word !important;
-    vertical-align: middle !important; /* Menjaga data di sebelahnya tetap tegak lurus di tengah baris */
+    vertical-align: middle !important; 
 }
 
 .table th { 
@@ -231,7 +241,6 @@ body {
     border: none !important;
 }
 
-/* Melengkungkan sudut baris melayang */
 .table tbody tr td:first-child {
     border-top-left-radius: 6px !important;
     border-bottom-left-radius: 6px !important;
@@ -242,32 +251,29 @@ body {
 }
 
 /* ==========================================================================
-   REVISI RE-ALIGN: STRUKTUR PENULISAN TABEL RATA TENGAH MUTLAK (ALL CENTERED)
+   REVISI RE-ALIGN: STRUKTUR DATA TABEL RATA TENGAH MUTLAK
    ========================================================================== */
 #tableOKP th, #tableOKP td,
 #tablePemuda th, #tablePemuda td {
-    text-align: center !important; /* FIX: Seluruh teks nama, data, dan angka dikunci rata tengah */
+    text-align: center !important; 
 }
 
-/* Proporsi lebar kolom fleksibel berbasis persentase agar seimbang di layar HP */
 #tableOKP th:nth-child(1), #tableOKP td:nth-child(1),
 #tablePemuda th:nth-child(1), #tablePemuda td:nth-child(1) {
-    width: 6% !important; /* Lebar kolom Nomor Urut */
+    width: 6% !important; 
 }
 
 #tableOKP th:nth-child(6), #tableOKP td:nth-child(6) {
-    width: 20% !important; /* Lebar kolom Status Keaktifan OKP */
+    width: 20% !important; 
 }
 
 #tablePemuda th:nth-child(4), #tablePemuda td:nth-child(4),
 #tablePemuda th:nth-child(5), #tablePemuda td:nth-child(5),
 #tablePemuda th:nth-child(6), #tablePemuda td:nth-child(6) {
-    width: 18% !important; /* Lebar seimbang lajur angka Kuantitas Pemuda (L, P, Total) */
+    width: 18% !important; 
 }
 
-/* ==========================================================================
-   TOMBOL SISTEM & NAVIGASI TAB MODAL
-   ========================================================================== */
+/* UI Selector Gate */
 .btn-outline-cyan {
     border: 1px solid var(--cyan-accent);
     color: var(--cyan-accent);
